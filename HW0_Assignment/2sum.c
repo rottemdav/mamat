@@ -68,15 +68,15 @@ void twoSum(int nums[], int nums_size, int target) {
 	int left = 0;
 	int right = nums_size-1;
 	
-	int nums_copy[MAX_ARRAY_SIZE] = {0};
+	int nums_copy[nums_size];
 	
 	// Copy the original array to an auxiliry array. 
-	for (int i = 0; i < nums_size-1; i++){
+	for (int i = 0; i < nums_size; i++){
 		nums_copy[i] = nums[i];
 	}
 
-	for (int i = 0; i < nums_size-1; i++){
-		if (nums[i] > nums[i+1]){
+	for (int i = 1; i < nums_size-1; i++){
+		if (nums[i] < nums[i-1]){
 			is_sorted = false;
 			break;
 		}
@@ -118,5 +118,12 @@ void twoSum(int nums[], int nums_size, int target) {
 		}
 	}
 	
-	printf("(%d, %d)\n",(left<right) ? left : right, (left<right) ? right : left);
+	bool is_left_left = (left < right);
+
+	// Printing the smaller index on the left
+	if (is_left_left){
+		printf("(%d, %d)\n", left, right);
+	} else {
+		printf("(%d, %d)\n", right, left);
+	}	
 }
