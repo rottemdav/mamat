@@ -75,7 +75,7 @@ void twoSum(int nums[], int nums_size, int target) {
 		nums_copy[i] = nums[i];
 	}
 
-	for (int i = 1; i < nums_size-1; i++){
+	for (int i = 1; i < nums_size; i++){
 		if (nums[i] < nums[i-1]){
 			is_sorted = false;
 			break;
