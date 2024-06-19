@@ -107,15 +107,16 @@ void twoSum(int nums[], int nums_size, int target) {
 	for (int i = 0; i < nums_size; i++){
 		if (nums[left] == nums_copy[i]){
 			left = i;
+			break;
 		}
 	}
 
 	for (int i = 0; i < nums_size; i++){
 		if ((nums[right] == nums_copy[i]) && (i != left)){
 			right = i;
+			break;
 		}
 	}
-
-	printf("(%d, %d)",(left<right) ? left : right, (left<right) ? right : left);
-
+	
+	printf("(%d, %d)\n",(left<right) ? left : right, (left<right) ? right : left);
 }
