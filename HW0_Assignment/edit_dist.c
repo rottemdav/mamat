@@ -5,6 +5,16 @@
 
 int edit_dist(char word1[], char word2[]);
 
+int min3(int a, int b, int c) {
+	if (a <= b && a <= c) {
+		return (a);
+	} else if (b <= a && b <= c) {
+		return (b);
+	} else if (c <= a && c <= b) {
+		return (c);
+	}
+}
+
 int main() {
 	char word1[MAX_WORD_LEN], word2[MAX_WORD_LEN];
 	
@@ -19,5 +29,23 @@ int main() {
 }
 
 int edit_dist(char word1[], char word2[]) {
-	/* YOUR CODE HERE */
+	int word1_len = strlen(word1);
+	int word2_len = strlen(word2);
+
+	if (word1_len == 0) {
+		return word2_len;
+	}
+
+	if (word2_len == 0) {
+		return word1_len;
+	}
+
+	if (word1[0] == word2[0]) {
+		return edit_dist(word1 +1 , word2 + 1);
+	} else {
+		return 1+min3(edit_dist(word1 +1, word2 +1), edit_dist(word1 +1, word2),edit_dist(word1, word2 + 1));
+	}
+
 }
+
+
