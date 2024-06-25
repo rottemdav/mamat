@@ -25,5 +25,3 @@ for article in $articles; do
      
     echo
 done
-echo "$articles"
-echo "Total: $(echo "$articles" | wc -l) articles"
