@@ -23,8 +23,18 @@ process_article() {
     fi
 }
 
+max_jobs=16  # Set this to the number of parallel jobs you want to run at a time
+active_jobs=0
+
 for article in $articles; do
     process_article "$article" &
+
+    # Manage the number of parallel jobs
+    (( active_jobs++ ))
+    if (( active_jobs >= max_jobs )); then
+        wait -n  # Wait for at least one process to finish before continuing
+        (( active_jobs-- ))
+    fi
 done
 
 wait
