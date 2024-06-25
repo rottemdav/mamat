@@ -11,10 +11,10 @@ articles=$(echo "$data" | \
 process_article() {
     local article=$1
 
-    content=$(wget --no-check-certificate -O -b -q - $article 2>/dev/null)
+    content=$(wget --no-check-certificate -O - $article 2>/dev/null)
 
-    amount_natanyahu=$(echo "$content" | grep -oP "Netanyahu" | wc -l)
-    amount_gantz=$(echo "$content" | grep -oP "Gantz" | wc -l)
+    amount_natanyahu=$(grep -oP "Netanyahu" <<< "$content" | wc -l)
+    amount_gantz=$(grep -oP "Gantz" <<< "$content" | wc -l)
 
     if [ $amount_natanyahu -lt 1 ] && [ $amount_gantz -lt 1 ]; then
         echo "$1, -"
