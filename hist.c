@@ -75,11 +75,11 @@ void operate(int *bins) {
     }
 
     /*print the histogram*/
-    bin_width = 100.0 / nbins;
+    bin_width = 100 / nbins;
     for (int i=0; i<nbins; i++) {
-        printf("%.0lf-%.0lf\t%d\n",
+        printf("%d-%d\t%d\n",
         i * bin_width, /* lower edge */
         (i<nbins-1)? ((i+1) * bin_width-1):100, /*higher edge*/
         bins[i]); /* value*/
-        } 
+    } 
 }
