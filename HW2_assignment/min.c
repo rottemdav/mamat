@@ -50,7 +50,7 @@ void operate(FILE *f) {
             exit(1);
         } else if (grade < 0 || grade > 100){ 
             /*error*/
-            fprintf(stderr, "Error at line %d: grade %d invalid",
+            fprintf(stderr, "Error at line %d: grade %d invalid\n",
             line_n, grade);
             exit(1);
         }

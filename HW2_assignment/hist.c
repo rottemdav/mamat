@@ -50,9 +50,9 @@ void operate(int *bins) {
     int grade;
     int retval;
     int line_n;
-    double bin_width;
+    int bin_width;
     
-    line_n = 0;
+    line_n = 1;
 
 
     while(1) {
@@ -65,21 +65,31 @@ void operate(int *bins) {
             exit(1);
         } else if (grade < 0 || grade > 100) { 
             /*error*/
-            fprintf(stderr, "Error at line %d: grade %d invalid",
+            fprintf(stderr, "Error at line %d: grade %d invalid\n",
             line_n, grade);
             exit(1);
         }
         /*allocate the bin*/
-        int location = grade / (100/nbins);
-        bins[location]++;
+        line_n++;
+        int location = grade / (100/nbins); // 100/3 = 33.3 67/33.3 = 2 
+        //printf("loc: %d\n", location);
+        if (location == nbins) {
+            //printf("aha\n");
+            bins[location-1]++;
+        } else {
+            bins[location]++;
+        }
     }
 
     /*print the histogram*/
-    bin_width = 100.0 / nbins;
-    for (int i=0; i<nbins; i++) {
-        printf("%.0lf-%.0lf\t%d\n",
+    bin_width = 100 / nbins; // 33.3~33 
+    for (int i=0; i<nbins; ++i) {
+        printf("%d-%d\t%d\n",
         i * bin_width, /* lower edge */
-        (i<nbins-1)? ((i+1) * bin_width-1):100, /*higher edge*/
+        (i<nbins-1) ? ((i+1) * bin_width-1) : 100, /*higher edge*/
+        /*if (i < 2 ) then (i+1)* 33 */
         bins[i]); /* value*/
-        } 
+        }
+
+         
 }
