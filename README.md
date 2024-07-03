@@ -1,1 +1,1 @@
-This is a test.
+This is the root of the whole mamat course git reporsitory.
