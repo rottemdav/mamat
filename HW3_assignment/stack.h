@@ -24,7 +24,7 @@ Stack* stack_create(int max_stack_size, clone_t clone,
 STACK_STATUS stack_destroy(Stack *pointer_to_stack); 
 
 /* Return if element was pushed successfully to the stack */
-STACK_STATUS stack_push(Stack *pointer_to_stack, void* new_element);
+STACK_STATUS stack_push(Stack *pointer_to_stack, elem_t new_element);
 
 /* Pops an element from the top of the stack */
 void stack_pop(Stack *pointer_to_stack);
