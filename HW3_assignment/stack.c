@@ -26,18 +26,6 @@ typedef struct Stack_t{
 
 Stack* stack_create(int max_stack_size, clone_t clone,
                     destroy_t destroy, print_t print){
-    
-    /* Create a new node the will serve as the top of the stack */
-    Node *new_node;         
-    new_node = (Node *)malloc(sizeof(Node));
-    
-    /* Checking memory allocation of malloc */
-    if (!new_node){ 
-        return NULL;
-    }
-    
-    new_node->next = NULL;
-    new_node->value = NULL;
 
     /* Initialize a pointer to the newly created stack */
     Stack *new_stack;
@@ -48,7 +36,7 @@ Stack* stack_create(int max_stack_size, clone_t clone,
         return NULL;        /* Return error*/
     }
 
-    new_stack->top = new_node;
+    new_stack->top = NULL;
     new_stack->max_size = max_stack_size;
     new_stack->current_size = 0;
     new_stack->clone = clone;
@@ -56,15 +44,12 @@ Stack* stack_create(int max_stack_size, clone_t clone,
     new_stack->print = print;
 
     return new_stack;       /* Return a pointer to the stack ADT */
-
 }
 
 STACK_STATUS stack_destroy(Stack *stack_pointer) {
     
-    if (stack_pointer->top == NULL){   /* If the stack isn't empty*/
-        
-        free(stack_pointer);
-
+    if (!stack_is_empty(stack_pointer)){   /* If the stack isn't empty*/
+        free(stack_pointer);               /* free the stack memory*/
     } else {
 
         /* Assign a temporary node so we can free up the memory it contain and 
