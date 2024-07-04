@@ -1,4 +1,4 @@
-#include <stack.h>
+#include "stack.h"
 #include <stdlib.h>
 
 /* --- Defining the ADT needed - stack implementation using linked list --- */
@@ -17,7 +17,7 @@ typedef struct Stack_t{
     int max_size;           /* Max size of the stack given by user */
     int current_size;
     clone_t clone;          /* Clone function of the user */
-    destroy_t destroy_t;    /* Mememory dislocation function of the user */
+    destroy_t destroy;    /* Mememory dislocation function of the user */
     print_t print;          /* Printing function of the user */
 } Stack;
 
@@ -31,24 +31,29 @@ Stack* stack_create(int max_stack_size, clone_t clone,
     Node *new_node;         
     new_node = (Node *)malloc(sizeof(Node));
     
+    /* Checking memory allocation of malloc */
+    if (!new_node){ 
+        return NULL;
+    }
+    
     new_node->next = NULL;
     new_node->value = NULL;
 
     /* Initialize a pointer to the newly created stack */
     Stack *new_stack;
     new_stack = (Stack *)malloc(sizeof(Stack));
+    
+    /* Check if the stack was initialized unsuccessfully (memory allocation) */    
+    if (!new_stack){ 
+        return NULL;        /* Return error*/
+    }
 
     new_stack->top = new_node;
     new_stack->max_size = max_stack_size;
     new_stack->current_size = 0;
     new_stack->clone = clone;
-    new_stack->destroy_t = destroy;
+    new_stack->destroy = destroy;
     new_stack->print = print;
-
-    /* Check if the stack was initialized unsuccessfully */    
-    if (!new_stack){ 
-        return NULL;        /* Return error*/
-    }
 
     return new_stack;       /* Return a pointer to the stack ADT */
 
@@ -76,7 +81,7 @@ STACK_STATUS stack_destroy(Stack *stack_pointer) {
 
             /* Dislocate the element inside the note using the user destroy
                function and decrease the current number of elements by 1 */
-            stack_pointer->destroy_t(tmp_top_to_remove->value);
+            stack_pointer->destroy(tmp_top_to_remove->value);
             stack_pointer->current_size--;
             
             /* Dislocate the memory of what used to be the top node in stack */
@@ -108,13 +113,20 @@ STACK_STATUS stack_push(Stack *stack_pointer, elem_t new_element){
         /* Insert a copy of the element as value */
         Node *new_node;
         new_node = (Node *)malloc(sizeof(Node));
+
+        /* Checking memory allocation of malloc */
+        if (!new_node){  
+            return NULL;
+        }
+
         new_node->value = stack_pointer->clone(new_element);
 
         /* Temporary node to check if a new node was pushed successfully*/
         Node *tmp_node = stack_pointer-> top;
 
         new_node->next = stack_pointer->top; 
-        stack_pointer->top = new_node;  
+        stack_pointer->top = new_node;
+        stack_pointer->current_size++;  
 
         /* If the top isn't the new node or set to null return failure */
         if (stack_pointer->top == tmp_node || !stack_pointer->top){
@@ -134,11 +146,12 @@ void stack_pop(Stack *stack_pointer){
 
         Node *tmp_node_to_pop = stack_pointer->top;
         stack_pointer->top = stack_pointer->top->next;
-        
+        stack_pointer->current_size--;
+
         /* First we free the element memory using the destroy and later the node
            itself */
-        stack_pointer->destroy_t(tmp_node_to_pop->value);
-        remove(tmp_node_to_pop);
+        stack_pointer->destroy(tmp_node_to_pop->value);
+        free(tmp_node_to_pop);
     }
 }
 
@@ -180,7 +193,7 @@ void stack_print(Stack *stack_pointer){
     
     Node *tmp_node_to_check = stack_pointer->top;
 
-    while (!tmp_node_to_check){ /* While current node to print isn't NULL */
+    while (tmp_node_to_check){ /* While current node to print isn't NULL */
 
         /* Print value of the stack element using the user print function */
         stack_pointer->print(tmp_node_to_check->value); 
