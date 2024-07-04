@@ -9,7 +9,7 @@ typedef struct node {
     struct node* next; 
 
     /* Pointer to the element in a stack node */
-    elem_t *value;
+    elem_t* value;
 } Node;
 
 typedef struct Stack_t{
@@ -28,7 +28,7 @@ Stack* stack_create(int max_stack_size, clone_t clone,
                     destroy_t destroy, print_t print){
 
     /* Initialize a pointer to the newly created stack */
-    Stack *new_stack;
+    Stack* new_stack;
     new_stack = (Stack *)malloc(sizeof(Stack));
     
     /* Check if the stack was initialized unsuccessfully (memory allocation) */    
@@ -46,7 +46,7 @@ Stack* stack_create(int max_stack_size, clone_t clone,
     return new_stack;       /* Return a pointer to the stack ADT */
 }
 
-STACK_STATUS stack_destroy(Stack *stack_pointer) {
+STACK_STATUS stack_destroy(Stack* stack_pointer) {
     
     if (!stack_is_empty(stack_pointer)){   /* If the stack isn't empty*/
         free(stack_pointer);               /* free the stack memory*/
@@ -54,7 +54,7 @@ STACK_STATUS stack_destroy(Stack *stack_pointer) {
 
         /* Assign a temporary node so we can free up the memory it contain and 
         assign the next node as top */
-        Node *tmp_top_to_remove = stack_pointer->top;
+        Node* tmp_top_to_remove = stack_pointer->top;
 
         while (!stack_is_empty(stack_pointer)){
             
@@ -86,7 +86,7 @@ STACK_STATUS stack_destroy(Stack *stack_pointer) {
     return STACK_SUCCESS;
 }
 
-STACK_STATUS stack_push(Stack *stack_pointer, elem_t new_element){
+STACK_STATUS stack_push(Stack* stack_pointer, elem_t new_element){
     
     /* Check if the stack is full, if so return error */
     if (stack_pointer->current_size == stack_pointer->max_size){
@@ -96,7 +96,7 @@ STACK_STATUS stack_push(Stack *stack_pointer, elem_t new_element){
     } else {
 
         /* Insert a copy of the element as value */
-        Node *new_node;
+        Node* new_node;
         new_node = (Node *)malloc(sizeof(Node));
 
         /* Checking memory allocation of malloc */
@@ -107,7 +107,7 @@ STACK_STATUS stack_push(Stack *stack_pointer, elem_t new_element){
         new_node->value = stack_pointer->clone(new_element);
 
         /* Temporary node to check if a new node was pushed successfully*/
-        Node *tmp_node = stack_pointer-> top;
+        Node* tmp_node = stack_pointer-> top;
 
         new_node->next = stack_pointer->top; 
         stack_pointer->top = new_node;
@@ -123,13 +123,13 @@ STACK_STATUS stack_push(Stack *stack_pointer, elem_t new_element){
     return STACK_SUCCESS;
 }
 
-void stack_pop(Stack *stack_pointer){
+void stack_pop(Stack* stack_pointer){
 
     if (stack_is_empty(stack_pointer)){    /* Check if the stack is empty */
         return;                         /* If so exit the function */
     } else {
 
-        Node *tmp_node_to_pop = stack_pointer->top;
+        Node* tmp_node_to_pop = stack_pointer->top;
         stack_pointer->top = stack_pointer->top->next;
         stack_pointer->current_size--;
 
@@ -140,7 +140,7 @@ void stack_pop(Stack *stack_pointer){
     }
 }
 
-elem_t stack_peek(Stack *stack_pointer){
+elem_t stack_peek(Stack* stack_pointer){
     
     if (stack_is_empty(stack_pointer)){ /* Check if the stack is empty */
         return NULL;                 /* If so return NULL for failure */
@@ -150,13 +150,13 @@ elem_t stack_peek(Stack *stack_pointer){
     return stack_pointer->top->value;   
 }
 
-int stack_size(Stack *stack_pointer){
+int stack_size(Stack* stack_pointer){
     
     /* Return the amount of numbers currently inside the stack */
     return stack_pointer->current_size;
 }
 
-bool stack_is_empty(Stack *stack_pointer){
+bool stack_is_empty(Stack* stack_pointer){
 
     if (stack_pointer->top == NULL){ /* If there is no top node */
         return true;                 /* will return true */
@@ -165,7 +165,7 @@ bool stack_is_empty(Stack *stack_pointer){
     return false;
 }
 
-int stack_capacity(Stack *stack_pointer){
+int stack_capacity(Stack* stack_pointer){
     
     if (stack_is_empty(stack_pointer)){ /* Check if the stack is empty */
         return 0;                       /* If so return NULL for failure */
@@ -174,9 +174,9 @@ int stack_capacity(Stack *stack_pointer){
     }
 }
 
-void stack_print(Stack *stack_pointer){
+void stack_print(Stack* stack_pointer){
     
-    Node *tmp_node_to_check = stack_pointer->top;
+    Node* tmp_node_to_check = stack_pointer->top;
 
     while (tmp_node_to_check){ /* While current node to print isn't NULL */
 
