@@ -105,3 +105,4 @@ STACK_STATUS stack_push(Stack *stack_pointer, elem_t new_element){
     /* New element was successfully pushed to the stack */
     return STACK_SUCCESS;
 }
+
