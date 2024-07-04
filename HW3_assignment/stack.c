@@ -1,6 +1,7 @@
 #include <stack.h>
 #include <stdlib.h>
 
+/* --- Defining the ADT needed - stack implementation using linked list --- */
 
 typedef struct node {
     /* Must use struct node* because Node/node* typedef is only defined outside
@@ -19,19 +20,22 @@ typedef struct Stack_t{
     print_t print;          /* Printing function of the user */
 } Stack;
 
+
+/* -------- Implementation of the functions to handle the stack --------*/
+
 Stack* stack_create(int max_stack_size, clone_t clone,
                     destroy_t destroy, print_t print){
     
     /* Create a new node the will serve as the top of the stack */
     Node *new_node;         
-    new_node = (Node *)malloc(sizeof(new_node));
+    new_node = (Node *)malloc(sizeof(Node));
     
     new_node->next = NULL;
     new_node->value = NULL;
 
     /* Initialize a pointer to the newly created stack */
     Stack *new_stack;
-    new_stack = (Stack *)malloc(sizeof(new_stack));
+    new_stack = (Stack *)malloc(sizeof(Stack));
 
     new_stack->top = new_node;
     new_stack->max_size = max_stack_size;
@@ -81,5 +85,23 @@ STACK_STATUS stack_destroy(Stack *stack_pointer) {
 }
 
 STACK_STATUS stack_push(Stack *stack_pointer, elem_t new_element){
+    
+    /* Allocate memory for new node and insert the user element as value */
+    Node *new_node;
+    new_node = (Node *)malloc(sizeof(Node));
+    new_node->value = new_element;
 
+    /* Temporary node to check if a new node was pushed successfully*/
+    Node *tmp_node = stack_pointer-> top;
+
+    new_node->next = stack_pointer->top; /* Set next node as top of the stack */
+    stack_pointer->top = new_node; /* Set the top of the stack as the new node*/ 
+
+    /* If the top isn't the new node or set to null return failure */
+    if (stack_pointer->top == tmp_node || !stack_pointer->top){
+        return STACK_FAILURE;
+    }
+
+    /* New element was successfully pushed to the stack */
+    return STACK_SUCCESS;
 }
