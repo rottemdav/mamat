@@ -1,6 +1,7 @@
 #include "student.h"
 #include "common.h"
 #include <stdlib.h>
+#include <string.h>
 
 /*struct student {
     char *name;
@@ -18,8 +19,16 @@ student* student_clone(student* student_to_clone) {
     }
 
     /* Assign all the data from the original student to the clone */
-    clone->name = (char *)malloc(sizeof(student_to_clone->name)); 
-    clone->name = student_to_clone->name;
+    clone->name = (char *)malloc(sizeof(char)*strlen(student_to_clone->name)); 
+    
+    /* Checking if memory allocation is successful */
+    if (!clone->name){
+        free(clone->name);
+        free(clone);
+        return NULL;
+    }
+    
+    strcpy(clone->name,student_to_clone->name);
     clone->age = student_to_clone->age;
     clone->id = student_to_clone->id;
 

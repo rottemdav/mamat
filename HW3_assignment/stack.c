@@ -87,7 +87,7 @@ STACK_STATUS stack_destroy(stack* stack_pointer) {
     return STACK_SUCCESS;
 }
 
-STACK_STATUS stack_push(stack* stack_pointer, elem_t new_element){
+STACK_STATUS stack_push(stack* stack_pointer, elem_t* new_element){
     
     /* Check if the stack is full, if so return error */
     if (stack_pointer->current_size == stack_pointer->max_size){

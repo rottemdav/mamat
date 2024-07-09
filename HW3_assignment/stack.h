@@ -8,7 +8,7 @@ typedef enum STACK_STATUS_T{
 } STACK_STATUS;
 
 /* Pointer to an element of the stack */ 
-typedef void *elem_t; 
+typedef void* elem_t; 
 
 /* Pointers to user function to clone, destroy and print an element in stack */
 typedef elem_t (*clone_t)(elem_t e); /* Clones the element */
@@ -25,7 +25,7 @@ stack* stack_create(int max_stack_size, clone_t clone,
 STACK_STATUS stack_destroy(stack *stack_pointer); 
 
 /* Return if element was pushed successfully to the stack */
-STACK_STATUS stack_push(stack *stack_pointer, elem_t new_element);
+STACK_STATUS stack_push(stack *stack_pointer, elem_t* new_element);
 
 /* Pops an element from the top of the stack */
 void stack_pop(stack *stack_pointer);
