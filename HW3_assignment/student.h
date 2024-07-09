@@ -1,7 +1,7 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
-typedef struct Student_t student; /* Opaque pointer */
+typedef struct student student; /* Opaque pointer */
 
 student *student_clone(student* student_to_clone);
 void student_destroy(student* student_to_destroy);
