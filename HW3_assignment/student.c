@@ -1,13 +1,14 @@
 #include "student.h"
+#include "common.h"
 #include <stdlib.h>
 
-typedef struct student {
+/*struct student {
     char *name;
     int age;
     int id;
-} student;
+};*/
 
-student* student_clone(const student* student_to_clone) {
+student* student_clone(student* student_to_clone) {
     student* clone;
     clone = (student *)malloc(sizeof(student));
 
