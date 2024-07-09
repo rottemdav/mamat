@@ -17,6 +17,7 @@ student* student_clone(const student* student_to_clone) {
     }
 
     /* Assign all the data from the original student to the clone */
+    clone->name = (char *)malloc(sizeof(student_to_clone->name)); 
     clone->name = student_to_clone->name;
     clone->age = student_to_clone->age;
     clone->id = student_to_clone->id;
