@@ -10,7 +10,7 @@ typedef struct node {
     struct node* next; 
 
     /* Pointer to the element in a stack node */
-    elem_t* value;
+    elem_t value;
 } Node;
 
 typedef struct stack {
@@ -49,7 +49,7 @@ stack* stack_create(int max_stack_size, clone_t clone,
 
 STACK_STATUS stack_destroy(stack* stack_pointer) {
     
-    if (!stack_is_empty(stack_pointer)){   /* If the stack isn't empty*/
+    if (stack_pointer == NULL){   /* If the stack isn't empty*/
         free(stack_pointer);               /* free the stack memory*/
     } else {
 
@@ -76,6 +76,7 @@ STACK_STATUS stack_destroy(stack* stack_pointer) {
 
         /* After we've done freeing each node in the stack we will free the
            entire stack struct */
+        free(stack_pointer->top);
         free(stack_pointer); 
         }
 
@@ -101,21 +102,29 @@ STACK_STATUS stack_push(stack* stack_pointer, elem_t* new_element){
         new_node = (Node *)malloc(sizeof(Node));
 
         /* Checking memory allocation of malloc */
-        if (!new_node){  
+        if (!new_node){
+            free(new_node);  
+            return STACK_FAILURE;
+        }
+        
+        new_node->value = stack_pointer->clone(new_element);
+
+        if (new_node->value == NULL){
+            free(new_node);
             return STACK_FAILURE;
         }
 
-        new_node->value = stack_pointer->clone(new_element);
-
         /* Temporary node to check if a new node was pushed successfully*/
-        Node* tmp_node = stack_pointer-> top;
-
+        //Node* tmp_node = stack_pointer-> top;
         new_node->next = stack_pointer->top; 
         stack_pointer->top = new_node;
         stack_pointer->current_size++;  
 
+        
         /* If the top isn't the new node or set to null return failure */
-        if (stack_pointer->top == tmp_node || !stack_pointer->top){
+        if (stack_pointer->top != new_node){
+            stack_pointer->destroy(new_node->value);
+            free(new_node);
             return STACK_FAILURE;
         }
     }
