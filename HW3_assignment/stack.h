@@ -3,8 +3,8 @@
 #define STACK_H
 
 typedef enum STACK_STATUS_T{
-    STACK_SUCCESS, /* Assigned to 0 by default */
-    STACK_FAILURE, /* Assigned to 1 by default */
+    STACK_SUCCESS=0, /* Assigned to 0 by default */
+    STACK_FAILURE=1, /* Assigned to 1 by default */
 } STACK_STATUS;
 
 /* Pointer to an element of the stack */ 
