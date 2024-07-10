@@ -139,6 +139,9 @@ STACK_STATUS stack_push(stack* stack_pointer, elem_t* new_element){
 }
 
 void stack_pop(stack* stack_pointer){
+    if (stack_pointer == NULL){
+        return;
+    }
 
     if (stack_is_empty(stack_pointer)){    /* Check if the stack is empty */
         return;                         /* If so exit the function */
@@ -157,12 +160,13 @@ void stack_pop(stack* stack_pointer){
 
 elem_t stack_peek(stack* stack_pointer){
     
-    if (stack_is_empty(stack_pointer)){ /* Check if the stack is empty */
+    if (stack_pointer == NULL){ /* Check if the stack is empty */
         return NULL;                 /* If so return NULL for failure */
+    } else if (stack_pointer->top == NULL){
+        return NULL;
     }
-
     /* Return a pointer to last element inserted to the stack */
-    return stack_pointer->top->value;   
+    return  stack_pointer->top->value;  
 }
 
 int stack_size(stack* stack_pointer){
@@ -173,7 +177,7 @@ int stack_size(stack* stack_pointer){
 
 bool stack_is_empty(stack* stack_pointer){
 
-    if (stack_pointer->top == NULL){ /* If there is no top node */
+    if (stack_pointer->top == NULL || stack_pointer == NULL){ /* If there is no top node */
         return true;                 /* will return true */
     }
 
@@ -191,6 +195,10 @@ int stack_capacity(stack* stack_pointer){
 
 void stack_print(stack* stack_pointer){
     
+    if (stack_pointer == NULL){
+        return;
+    }
+
     Node* tmp_node_to_check = stack_pointer->top;
 
     while (tmp_node_to_check){ /* While current node to print isn't NULL */
