@@ -1,0 +1,20 @@
+Create_stack 5 0
+Create_stack 0 1
+Create_stack 5 -1
+Create_stack 5 3
+Create_stack 5 0
+Add_student 123 John 21 0
+Add_student 123 John 21 1
+Add_student 123 John 21
+Remove_student 0
+Remove_student 1
+Peek_stack 0
+Peek_stack 1
+Stack_size 0
+Stack_size 1
+Stack_is_empty 0
+Stack_capacity 0
+Stack_capacity 1
+Print_stack 0
+Print_stack 1
+Unknown_command
