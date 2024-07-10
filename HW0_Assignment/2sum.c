@@ -23,31 +23,107 @@ int main() {
 	return (0);
 }
 
+/**  
+ * @brief Compares two numbers. Function is necessary for qsort function. 
+ * @param a Pointer to the first number to comapre.
+ * @param b Pointer to the second number to comapre.
+ * @return A value, -1,0,1 depending if a<b,a>b,a=b accordingly. 
+ */
+
+int compare_nums(void const *a, void const *b){
+	
+	// Insert the given pointer values into local integers inside the function.
+	int num_a = *(int const *)a;
+	int num_b = *(int const *)b;
+
+	if (num_a < num_b){
+		return -1;
+	} else if (num_a > num_b){
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 /**
  * @brief Check if the sum of two numbers in the array equals to target
  * 
- * This function go through all the possible sums from two different numbers 
- * in the array, if they equal.
+ * This function will sort the input array using quick-sort. If the input is
+ * already sorted, then we will check to avoid using quick-sort in complexity of
+ * O(nums_size^2), otherwise we will use quick-sort in complexity 
+ * O(num_size*log(num_size)).
+ * 
+ * Later on we will use an algorithm to if there are two numbers in the array 
+ * that equal to target, in time-complexity O(n).
+ *
+ * The function will print the indexes of the first two numbers that equal
+ * target.
 */
 
 void twoSum(int nums[], int nums_size, int target) {
-	
-	bool is_found = false;
+	// A boolean to check if the input array is already sorted.
+	bool is_sorted = true;
 
+	// These integers are the indexes that will be used in the algorithm.
+	int left = 0;
+	int right = nums_size-1;
+	
+	int nums_copy[nums_size];
+	
+	// Copy the original array to an auxiliry array. 
 	for (int i = 0; i < nums_size; i++){
-		for (int j = 0; j < nums_size; j++){
-			if (i == j){
-				continue;
-			}
-			else if (target == (nums[i] + nums[j])){
-				printf("(%d,%d)", i,j);
-				is_found = true;
-				break;
-			}
-		}	
-		if (is_found){
+		nums_copy[i] = nums[i];
+	}
+
+	for (int i = 1; i < nums_size-1; i++){
+		if (nums[i] < nums[i-1]){
+			is_sorted = false;
 			break;
 		}
 	}
 
+	// Will use quick-sort to sort the array if nums isn't already sorted.
+	if (!is_sorted){
+		qsort(nums, nums_size,sizeof(int),compare_nums);
+	}
+
+	/** 
+	 * We are guaranteed to have at least one pair of numbers so the loop is 
+	 * isn't inifinte.
+	*/
+	while (1){
+		int sum_of_two = nums[left]+nums[right];
+		
+		if (sum_of_two > target){
+			right--;
+		} else if (sum_of_two < target){
+			left++;
+		} else{
+			// Found a pair of numbers that equal target
+			break;
+		}
+	}
+
+	for (int i = 0; i < nums_size; i++){
+		if (nums[left] == nums_copy[i]){
+			left = i;
+			break;
+		}
+	}
+
+	for (int i = 0; i < nums_size; i++){
+		if ((nums[right] == nums_copy[i]) && (i != left)){
+			right = i;
+			break;
+		}
+	}
+	
+	bool is_left_left = (left < right);
+
+	// Printing the smaller index on the left
+	if (is_left_left){
+		printf("(%d, %d)\n", left, right);
+	} else {
+		printf("(%d, %d)\n", right, left);
+	}	
 }

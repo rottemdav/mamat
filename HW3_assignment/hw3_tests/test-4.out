@@ -1,0 +1,10 @@
+max_num_of_elem should be bigger then 0
+max_num_of_elem should be bigger then 0
+stack id should be in range [0,3)
+stack id should be in range [0,3)
+failed to add student to stack with id 0
+stack with 1 elements and id 0 was created
+Added student to stack with id 0
+failed to add student to stack with id 0
+Removed student from stack with id 0
+stack with 3 elements and id 2 was created

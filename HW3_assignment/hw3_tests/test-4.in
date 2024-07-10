@@ -1,0 +1,31 @@
+# Edge Case Tests
+
+# Test 1: Invalid stack capacity
+Create_stack 0 0
+Create_stack -1 0
+
+# Test 2: Invalid stack ID
+Create_stack 5 -1
+Create_stack 5 3
+
+# Test 3: Add student to non-existent stack
+Add_student 111 mike 23 0
+
+# Test 4: Add students to a full stack
+Create_stack 1 0
+Add_student 111 mike 23 0
+Add_student 112 bob 24 0
+
+# Test 5: Remove student from an empty stack
+Remove_student 0
+
+# Test 6: Peek at an empty stack
+Peek_stack 0
+
+# Test 7: Check size/capacity of a non-existent stack
+Stack_size 1
+Stack_capacity 1
+
+# Test 8: Print an empty stack
+Create_stack 3 2
+Print_stack 2
