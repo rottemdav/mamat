@@ -1,0 +1,48 @@
+stack with 5 elements and id 0 was created
+stack with 3 elements and id 1 was created
+stack with 4 elements and id 2 was created
+Added student to stack with id 0
+Added student to stack with id 0
+Added student to stack with id 0
+Added student to stack with id 1
+Added student to stack with id 1
+Added student to stack with id 2
+Added student to stack with id 2
+Added student to stack with id 2
+student name: charlie, age: 22, id: 3.
+student name: bob, age: 21, id: 2.
+student name: alice, age: 20, id: 1.
+student name: eve, age: 24, id: 5.
+student name: dave, age: 23, id: 4.
+student name: hank, age: 27, id: 8.
+student name: grace, age: 26, id: 7.
+student name: frank, age: 25, id: 6.
+student name: charlie, age: 22, id: 3.
+student name: eve, age: 24, id: 5.
+student name: hank, age: 27, id: 8.
+Removed student from stack with id 0
+Removed student from stack with id 1
+Removed student from stack with id 2
+stack 0 is: not empty
+stack 1 is: not empty
+stack 2 is: not empty
+student name: bob, age: 21, id: 2.
+student name: alice, age: 20, id: 1.
+student name: dave, age: 23, id: 4.
+student name: grace, age: 26, id: 7.
+student name: frank, age: 25, id: 6.
+stack 0 size is: 2
+stack 0 capacity is: 3
+stack 1 size is: 1
+stack 1 capacity is: 2
+stack 2 size is: 2
+stack 2 capacity is: 2
+Added student to stack with id 1
+Added student to stack with id 1
+student name: jack, age: 29, id: 10.
+student name: irene, age: 28, id: 9.
+student name: dave, age: 23, id: 4.
+Removed student from stack with id 1
+Removed student from stack with id 1
+Removed student from stack with id 1
+stack 1 is: empty

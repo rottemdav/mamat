@@ -1,0 +1,53 @@
+# create stacks
+Create_stack 5 0
+Create_stack 3 1
+Create_stack 4 2
+# add students
+Add_student 1 alice 20 0
+Add_student 2 bob 21 0
+Add_student 3 charlie 22 0
+Add_student 4 dave 23 1
+Add_student 5 eve 24 1
+Add_student 6 frank 25 2
+Add_student 7 grace 26 2
+Add_student 8 hank 27 2
+# print stack content
+Print_stack 0
+Print_stack 1
+Print_stack 2
+# peek stack top
+Peek_stack 0
+Peek_stack 1
+Peek_stack 2
+# remove students
+Remove_student 0
+Remove_student 1
+Remove_student 2
+# check if stack is empty
+Stack_is_empty 0
+Stack_is_empty 1
+Stack_is_empty 2
+# print stack content again
+Print_stack 0
+Print_stack 1
+Print_stack 2
+# stack size and capacity
+Stack_size 0
+Stack_capacity 0
+Stack_size 1
+Stack_capacity 1
+Stack_size 2
+Stack_capacity 2
+# add more students
+Add_student 9 irene 28 1
+Add_student 10 jack 29 1
+# print stack content again
+Print_stack 1
+# remove all students
+Remove_student 1
+Remove_student 1
+Remove_student 1
+# check if stack is empty
+Stack_is_empty 1
+# print stack content again
+Print_stack 1
