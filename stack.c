@@ -33,7 +33,8 @@ stack* stack_create(int max_stack_size, clone_t clone,
     new_stack = (stack *)malloc(sizeof(stack));
     
     /* Check if the stack was initialized unsuccessfully (memory allocation) */    
-    if (!new_stack){ 
+    if (!new_stack || max_stack_size <= 0){
+        stack_destroy(new_stack);  
         return NULL;        /* Return error*/
     }
 
@@ -89,11 +90,15 @@ STACK_STATUS stack_destroy(stack* stack_pointer) {
 }
 
 STACK_STATUS stack_push(stack* stack_pointer, elem_t* new_element){
-    
-    /* Check if the stack is full, if so return error */
-    if (stack_pointer->current_size == stack_pointer->max_size){
-        
+
+    /* Check if the stack was created */    
+    if (stack_pointer == NULL){
         return STACK_FAILURE;
+
+    } else if (stack_pointer->current_size == stack_pointer->max_size){
+        /* Return failure if current number fo elements in stack is 
+           bigger than size*/
+        return STACK_FAILURE; 
 
     } else {
 
