@@ -3,9 +3,9 @@
 #include <string.h>
 #include <stdbool.h>
 
+#define ERROR -1
 #define SUCCESS 0
 #define FAIL 1
-typedef void* elem_t;
 
 /* grades == list of all students
 *   list of all students containts single Student struct
@@ -110,73 +110,32 @@ void grades_destroy(Grades *grades){
 int grades_add_student(Grades *grades, const char *name, int id){
     /* Check if the student list pointer exists at all*/
     if (grades == NULL){
-        return 1;
+        return FAIL;
     }
     
     /* If list of students is empty - will add student*/
     if (grades->students == NULL){
         Student* new_student = (Student *)malloc(sizeof(Student *));
-        /* Check memory allocation was successful */
-        if (new_student == NULL){
-            return FAIL;
-        }
         
-        struct list* new_grade_info = list_init(grade_clone,grades_destroy);
-        /* Check memory allocation was successful */
-        if (new_grade_info == NULL){
-            return FAIL;
-        }
-
-        /* Check memory allocation was successful */
-        char* new_name = (char *)malloc(sizeof(char)*(strlen(name)+1));
-        if (new_name == NULL){
-            return FAIL;
-        }
-
-        new_student->grades_info = new_grade_info;
-        new_student->name = new_name;
-        new_student->id = id;
-
     } else { /* List of students not empty (need to check existence) */
-        struct iterator* student_iterator; /* Current node to check*/
-        
-        /* Get the element in the node (student) */
-        student_iterator = list_begin(grades->students);
-        
-        while (student_iterator != NULL){
-            Student* current_student = list_get(student_iterator);
-            
-            /* If student already exists */
-            if (current_student->id == id){
-                return FAIL; 
-            }
+       
+        /* Checks if the student is already in the list */
+        struct iterator* student_position = find_student(grades->students, id);       
+        if (student_position != NULL){
+            return FAIL; 
+        }
 
-            /* Advance the iterator */
-            list_next(student_iterator);
-        } /* If while loop finished, the student doesn't exist */
+        /* ---- Student not on list so we create a new one ---- */
 
-         Student* new_student = (Student *)malloc(sizeof(Student *));
-        /* Check memory allocation was successful */
+        Student* new_student = create_new_student(name,id);
         if (new_student == NULL){
             return FAIL;
         }
         
-        struct list* new_grade_info = list_init(grade_clone,grades_destroy);
-        /* Check memory allocation was successful */
-        if (new_grade_info == NULL){
-            return FAIL;
-        }
+        /* Insert the student to the back of the list */
+        list_push_back(grades->students, new_student);
 
-        /* Check memory allocation was successful */
-        char* new_name = (char *)malloc(sizeof(char)*(strlen(name)+1));
-        if (new_name == NULL){
-            return FAIL;
-        }
-
-        new_student->grades_info = new_grade_info;
-        new_student->name = new_name;
-        new_student->id = id;      
-    }
+    } /* Succesfully created a student */
     
     return SUCCESS; 
 }
@@ -222,7 +181,9 @@ int grades_add_grade(Grades* grades, const char* name,
 }
 
 float grades_calc_avg(struct grades *grades, int id, char **out){
-    
+    if (grades == NULL){
+
+    }
 }
 
 int grades_print_student(){
@@ -233,30 +194,78 @@ int grades_print_all(){
 
 }
 
-bool does_student_exists(struct list* student_list, Student* student_to_check){
+/**
+ * @brief Finds the student (if exists) inside the list
+ * @param student_list The list of students we provide
+ * @param student_id The student we wish to find
+ * @return A pointer to iterator for node position in list, NULL if not found
+ * @note Iterates through all the nodes in linked list and compare with id
+ * @note No memory allocation
+ */
+struct iterator* find_student(struct list* student_list, int student_id){
     
+    /* Check if the student list or target student pointer is null */
     if (student_list == NULL){
-        return false;
-    } else {
-        
+        return NULL; 
     }
     
-    struct iterator* student_iterator; /* Current node to check*/
+    /* Current node to check*/
+    struct iterator* student_iterator; 
         
-        /* Get the element in the node (student) */
-        student_iterator = list_begin(grades->students);
+    /* Start searching from the first node in list */
+    student_iterator = list_begin(student_list);
         
-        while (student_iterator != NULL){
-            Student* current_student = list_get(student_iterator);
-            
-            /* If student already exists */
-            if (current_student->id == id){
-                return FAIL; 
-            }
+    while (student_iterator != NULL){
+        
+        /* Get the student element from the list */
+        Student* current_student = list_get(student_iterator);
+        
+        /* Checks if student id shows in list */
+        if (current_student->id == student_id){
+            return student_iterator; 
+        }
 
-            /* Advance the iterator */
-            list_next(student_iterator);
-        } /* If while loop finished, the student doesn't exist */
+        /* Advance the iterator */
+        list_next(student_iterator);
+    } /* If while loop finished, the student doesn't exist and iterator is on
+         NULL */
 
-         Student* new_student = (Student *)malloc(sizeof(Student *));
+    /* Returns the position of the student inside the linked list */
+    return student_iterator;
+}
+
+/**
+ * @brief Create a new student element
+ * @param name Student's name
+ * @param id Student id
+ * @return Return a pointer to student element, return NULL in-case of error 
+ * @note This function allocates memory for the new student
+ */
+
+Student* create_new_student(char* name, int id){
+    Student* new_student = (Student *)malloc(sizeof(Student *));
+    /* Check memory allocation was successful */
+    if (new_student == NULL){
+        return NULL;
+    }
+    
+    struct list* new_grade_info = list_init(grade_clone,grades_destroy);
+    /* Check memory allocation was successful */
+    if (new_grade_info == NULL){
+        return NULL;
+    }
+
+    /* Check memory allocation was successful */
+    char* new_name = (char *)malloc(sizeof(char)*(strlen(name)+1));
+    if (new_name == NULL){
+        return NULL;
+    }
+
+    strcpy(new_name, name);
+
+    new_student->grades_info = new_grade_info;
+    new_student->name = new_name;
+    new_student->id = id;
+
+    return new_student;
 }
