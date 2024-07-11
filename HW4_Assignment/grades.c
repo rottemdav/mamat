@@ -182,8 +182,30 @@ int grades_add_grade(Grades* grades, const char* name,
 
 float grades_calc_avg(struct grades *grades, int id, char **out){
     if (grades == NULL){
-
+        *out = NULL;
+        return ERROR;
     }
+    Student* student_to_check = find_student(grades->students,id);
+    if (student_to_check == NULL){
+        *out = NULL;
+        return ERROR;
+    }
+
+    int sum = 0;
+    int amount_of_courses = 0;
+    float average = 0;
+
+    /* Start to check from the begining of the list */
+    struct iterator* current_course = list_begin(student_to_check->grades_info);
+    while (current_course != NULL){
+        Course* course = list_get(current_course);
+        sum += course->grade_value;
+        amount_of_courses++;
+
+        current_course = list_next(current_course);
+    }
+
+    average = (float)sum / amount_of_courses;
 }
 
 int grades_print_student(){
