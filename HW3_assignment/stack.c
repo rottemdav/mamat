@@ -186,7 +186,7 @@ bool stack_is_empty(stack* stack_pointer){
 
 int stack_capacity(stack* stack_pointer){
     
-    if (stack_is_empty(stack_pointer)){ /* Check if the stack is empty */
+    if (stack_pointer == NULL){ /* Check if the stack is empty */
         return 0;                       /* If so return NULL for failure */
     } else {
         return (stack_pointer->max_size - stack_pointer->current_size);
