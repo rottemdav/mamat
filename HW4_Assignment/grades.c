@@ -1,7 +1,8 @@
-#include "grades.h"
-#include "linked-list.h"
+#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include "grades.h"
+#include "linked-list.h"
 
 #define ERROR -1
 #define SUCCESS 0
@@ -32,6 +33,11 @@ typedef struct course{
     int grade_value;
     char* course_name; 
 } Course;
+
+Course* create_new_course(char* name, int grade);
+Course* find_course(struct list* courses_list, char* name);
+Student* create_new_student(char* name, int id);
+Student* find_student(struct list* student_list, int student_id);
 
 /* A function to clone student element*/
 int student_clone(Student* src, Student **dst){
@@ -469,7 +475,7 @@ Course* create_new_course(char* name, int grade) {
  * @return return a pointer to the wanted course. 
  */
 
-struct Course* find_course(struct list* courses_list, char* name) {
+Course* find_course(struct list* courses_list, char* name) {
     if (courses_list == NULL) {
         return NULL;
     }
