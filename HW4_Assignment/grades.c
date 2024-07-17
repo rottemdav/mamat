@@ -44,7 +44,7 @@ int student_clone(Student* src, Student **dst){
     if (src == NULL || dst == NULL){
         return FAIL;
     }
-    Student* clone = (Student *)malloc(sizeof(Student*));
+    Student* clone = (Student *)malloc(sizeof(Student));
     if (clone == NULL){
         return FAIL;
     }
@@ -71,7 +71,7 @@ int course_clone(Course* src, Course **dst){
     if (src == NULL || dst == NULL){
         return FAIL;
     }
-    Course* clone = (Course *)malloc(sizeof(Course*));
+    Course* clone = (Course *)malloc(sizeof(Course));
     if (clone == NULL){
         return FAIL;
     }
@@ -308,10 +308,10 @@ int grades_print_student(Grades* grades, int id){
     printf("%s %d: ", s_to_print->name, id);
 
     struct iterator* course_itr = list_begin(s_to_print->grades_info);
-    while (!course_itr) {
+    while (course_itr) {
 
         /* Get a single course element from the grades list to print. */
-        Course* c_to_print = (Course*)list_get(s_to_print->grades_info);
+        Course* c_to_print = (Course*)list_get(course_itr);
 
         /* Checks if course and course name exists (doesn't suppose to happen) */
         if (!c_to_print) return FAIL;
@@ -334,8 +334,8 @@ int grades_print_all(Grades* grades){
     /* Access to the top of the students list. */
     struct iterator* student_itr = list(begin(grades->students));
 
-    /* Loop through the list and print . */
-    while(!student_itr) {
+    /* Loop through the list and print */
+    while(student_itr) {
         /* Get a single student element from the list to print. */
         Student* s_to_print = (Student*)list_get(student_itr);
         grades_print_student(grades, s_to_print->id);
@@ -362,15 +362,12 @@ Student* find_student(struct list* student_list, int student_id){
     if (student_list == NULL){
         return NULL; 
     }
-    
-    /* Current node to check*/
-    struct iterator* student_iterator; 
-        
+  
+    /* Start searching from the first node in list */
+    struct iterator* student_iterator = list_begin(student_list);
+      
     /* Initialize student to return */
     Student* current_student = NULL;
-
-    /* Start searching from the first node in list */
-    student_iterator = list_begin(student_list);
 
     while (student_iterator != NULL){
         
@@ -382,10 +379,9 @@ Student* find_student(struct list* student_list, int student_id){
             return NULL;
         }
 
-        /* Checks if student id shows in list */
+        /* Checks if student id shows in list, if so returns it */
         if (current_student->id == student_id){
             return current_student;          
-
         }
 
         /* Advance the iterator */
@@ -395,8 +391,7 @@ Student* find_student(struct list* student_list, int student_id){
     } /* If while loop finished, the student doesn't exist and iterator is on
          NULL */
 
-    /* Returns the position of the student inside the linked list */
-    return current_student;
+    return NULL;
 }
 
 /**
@@ -481,11 +476,10 @@ Course* find_course(struct list* courses_list, char* name) {
     }
     
     /* Create the iterato, and assign the begging of the list to it. */
-    struct iterator* course_iterator; 
-    course_iterator = list_begin(courses_list);
+    struct iterator* course_iterator = list_begin(courses_list);
 
     /* Create the checked course value. */
-    Course* current_course;
+    Course* current_course = NULL;
 
     while(course_iterator != NULL) {
         current_course = (Course*)list_get(course_iterator);
@@ -495,18 +489,5 @@ Course* find_course(struct list* courses_list, char* name) {
         course_iterator = list_next(course_iterator);
     }
 
-    return current_course;
-
+    return NULL;
 }
-
-/* Old implementation 
-    struct iterator* i_student = list_begin(grades);
-    Student* current_student;
-    while(!i_student){
-        current_student = (Student*)list_get(current_student);
-        if (current_student->id == id) {
-            break;
-        }
-        i_student = list_next(i_student);
-    }
-*/

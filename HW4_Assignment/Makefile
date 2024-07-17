@@ -3,6 +3,7 @@ CLINK = $(CC)
 CFLAGS = -g -Wall -std=c99 -fPIC
 LDFLAGS = -L. -llinked-list
 LIBS = -lgrades -llinked-list
+RM=rm -rf
 
 all: libgrades.so
 
@@ -11,3 +12,6 @@ libgrades.so: grades.o
 
 grades.o: grades.c grades.h linked-list.h
 	$(CC) $(CFLAGS) -c grades.c
+
+clean:
+	$(RM) *.o libgrades.so
