@@ -1,21 +1,14 @@
 CC=gcc
 CLINK=$(CC)
-CFLAGS=-g -Wall -std=c99 -fPIC
+CFLAGS=-g -Wall -std=c99
 OBJS=grades.o
-LIBS=-lgrades -llinked-list
 LDFLAGS=-L.
 
-prog.exe: $(OBJS) libgrades.so liblinked-list.so
-	$(CLINK) $(OBJS) -o prog.exe $(LDFLAGS) $(LIBS)
-
-libgrades.o: grades.c grades.h
-	$(CC) $(CFLAGS) -c grades.c -o libgrades.o
-
-libgrades.so: libgrades.o
-	$(CLINK) -shared libgrades.o -o libgrades.so
+libgrades.so: grades.o 
+	$(CLINK) -shared grades.o -o libgrades.so
 
 grades.o: grades.c grades.h
-	$(CC) $(CFLAGS) -c grades.c -o grades.o
+	$(CC) $(CFLAGS) -fpic -c grades.c
 
 clean:
-	rm -rf *.o *.exe *.so
+	rm -rf *.o libgrades.so
