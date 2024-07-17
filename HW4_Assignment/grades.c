@@ -332,7 +332,7 @@ int grades_print_all(Grades* grades){
     if (!grades) return FAIL;
 
     /* Access to the top of the students list. */
-    struct iterator* student_itr = list(begin(grades->students));
+    struct iterator* student_itr = list_begin(grades->students);
 
     /* Loop through the list and print */
     while(student_itr) {
