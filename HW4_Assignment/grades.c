@@ -34,22 +34,70 @@ typedef struct course{
     char* course_name; 
 } Course;
 
+/* Inside functions for our own use */
 Course* create_new_course(char* name, int grade);
-Course* find_course(struct list* courses_list, char* name);
-Student* create_new_student(char* name, int id);
+Course* find_course(struct list* courses_list, const char* name);
+Student* create_new_student(const char* name, int id);
 Student* find_student(struct list* student_list, int student_id);
+
+/* Inside clone and destroy functions for students and grades lists */
+int course_clone(Course* src, Course **dst);
+void student_destroy(Student* student_ptr);
+void course_destroy(Course *course_ptr);
 
 /* A function to clone student element*/
 int student_clone(Student* src, Student **dst){
     if (src == NULL || dst == NULL){
         return FAIL;
     }
+
     Student* clone = (Student *)malloc(sizeof(Student));
     if (clone == NULL){
         return FAIL;
     }
 
-    *clone = *src;
+    /* Copy the name (and allocates memory)*/
+    clone->name = (char *)malloc(sizeof(char)*(strlen(src->name)+1));
+    strcpy(clone->name,src->name);
+    if (clone->name == NULL){
+        free(clone);
+        return FAIL;
+    }
+
+    /* Initialize a list for grades */
+    clone->grades_info = list_init(course_clone,course_destroy);
+    if (clone->grades_info == NULL){
+        list_destroy(clone->grades_info);
+        free(clone->name);
+        free(clone);
+        return FAIL;
+    }
+    /* Copy each course by elements with course clone using a loop */
+    struct iterator* course_it = list_begin(src->grades_info);
+    while (course_it != NULL){
+        
+        Course* course = (Course*)list_get(course_it);
+        Course* new_course;
+
+        /* Cloning the course and deallocates the memory otherwise */
+        if (course_clone(course, &new_course) == FAIL) {
+            list_destroy(clone->grades_info);
+            free(clone->name);
+            free(clone);
+            return FAIL;
+        }
+
+        /* Pushes the new course into the students list */
+        if (list_push_back(clone->grades_info, new_course) == FAIL){
+            list_destroy(clone->grades_info);
+            free(clone->name);
+            free(clone);
+            return FAIL;
+        }
+        course_it = list_next(course_it);
+    }
+
+    clone->id = src->id;
     *dst = clone;
 
     return SUCCESS;
@@ -59,11 +107,15 @@ int student_clone(Student* src, Student **dst){
 void student_destroy(Student* student_ptr){
     if (student_ptr != NULL){
         if (student_ptr->grades_info != NULL){
-             list_destroy(student_ptr->grades_info);
+            list_destroy(student_ptr->grades_info);
         }
+
+        if (student_ptr->name != NULL){
+            free(student_ptr->name);
+        }
+
+        free(student_ptr);
     }
-   free(student_ptr->name);
-   free(student_ptr);
 }
 
 /* A function to clone course element. */
@@ -71,12 +123,21 @@ int course_clone(Course* src, Course **dst){
     if (src == NULL || dst == NULL){
         return FAIL;
     }
+
     Course* clone = (Course *)malloc(sizeof(Course));
     if (clone == NULL){
+        free(clone);
         return FAIL;
     }
 
-    *clone = *src;
+    clone->course_name = strdup(src->course_name);
+    if (clone->course_name == NULL){
+        free(clone->course_name);
+        free(clone);
+        return FAIL;
+    }
+
+    clone->grade_value = src->grade_value;
     *dst = clone;
 
     return SUCCESS;
@@ -84,8 +145,13 @@ int course_clone(Course* src, Course **dst){
 
 /* A function to dealocate the memory of course-lists */
 void course_destroy(Course *course_ptr){ 
-   free(course_ptr->course_name);
-   free(course_ptr);
+    /* Checks if course pointer exists, if so free the memory*/
+    if (course_ptr != NULL){
+        if (course_ptr->course_name != NULL){
+            free(course_ptr->course_name);
+        }
+        free(course_ptr);
+    }
 }
 
 Grades* grades_init(){
@@ -101,6 +167,7 @@ Grades* grades_init(){
         
     /* Checking for corret memory allocation */
     if (new_students == NULL) {
+        grades_destroy(grade_system);
         return NULL;
     }
 
@@ -111,121 +178,115 @@ Grades* grades_init(){
 
 void grades_destroy(Grades *grades){
     /* Check if grade system exists, try to destory a non-existant struct. */
-    if (grades == NULL) {
-        return;
+    if (grades != NULL) {
+        if (grades->students != NULL){
+            list_destroy(grades->students);
+        }
+        free(grades);
     } 
-    /* There's a student list - deallocate */
-    list_destroy(grades->students);
 }
 
 int grades_add_student(Grades *grades, const char *name, int id){
     /* Check if the student list pointer exists at all */
-    if (grades == NULL){
+    if (grades == NULL || name == NULL){
         return FAIL;
     }
-    
-    /* If list of students is empty - will add student */
+
     if (grades->students == NULL){
-        /* Allocate memory for new student */
+        return FAIL;
+    }
+
+    /* If student exists */
+    if (find_student(grades->students,id) != NULL){
+        return FAIL;
+
+    } else {
+        /* Will create new student element */
         Student* new_student = create_new_student(name,id);
-
-        /* Checks memory allocation for student */
-        if (!new_student){
-            return FAIL;
-        }
-        
-        /* Pushes the student into the list, checks for pushing attempt */
-        if (list_push_back(grades->students, new_student) != SUCCESS){
-            return FAIL;
-        }
-        
-    } else { /* List of students not empty (need to check existence) */
-       
-        /* Checks if the student is already in the list */
-        Student* student_to_check = find_student(grades->students, id);       
-        if (student_to_check != NULL){
-            return FAIL; 
-        }
-
-        /* ---- Student not on list so we create a new one ---- */
-
-        Student* new_student = create_new_student(name,id);
-        
-        /* Checks for memory allocation */
         if (new_student == NULL){
             return FAIL;
         }
-        
-        /* Insert the student to the back of the list, checks pushing attempt */
-        if (list_push_back(grades->students, new_student) != SUCCESS){
+        if (list_push_front(grades->students, new_student) != SUCCESS){
+            student_destroy(new_student);
             return FAIL;
         }
 
-    } /* Succesfully created a student and pushed inside the list */
+        student_destroy(new_student);
+    }
     
     return SUCCESS; 
 }
 
+/* Allocates memory for new course if grade list exists otherwise, 
+   will alocate memory for new grade sheet and course */
 int grades_add_grade(Grades* grades, const char* name,
                      int id, int grade){
 
     /* Check for existing DS*/                    
-    if (grades == NULL) {
+    if (grades == NULL || name == NULL || grades->students == NULL) {
+        return FAIL;
+    }
+
+    if (grade > 100 || grade < 0){
         return FAIL;
     }
 
     /* Get the wanted student id.  */
-    Student* student_id = (Student*)find_student(grades->students, id);
+    Student* student = find_student(grades->students, id);
 
     /* There's no existing student with this id. */
-    if (student_id == NULL) {
+    if (student == NULL) {
         return FAIL;
     }
-    
-    /* Checks if there's grades info, if not, allocate new course. */
-    if (student_id->grades_info == NULL) {
-        Course* new_course = create_new_course(name, grade);
+
+    /* Student grade sheet not created*/
+    if (student->grades_info == NULL){
+        /* Memory allocations for both grade sheet and course element */
+        student->grades_info = list_init(course_clone,course_destroy);
+        if (student->grades_info == NULL){
+            return FAIL;
+        }
         
-        /* Checks memory allocation for new course */
+        Course* new_course = create_new_course(name,grade);
+        
+        if (new_course == NULL){
+            list_destroy(student->grades_info);
+            return FAIL;
+        }
+
+        /* Will push the new course element into list, if fails free memory */
+        if (list_push_front(student->grades_info,new_course) != SUCCESS){
+            free(new_course->course_name);
+            free(new_course);
+            list_destroy(student->grades_info);
+            return FAIL;
+        }
+        /* Free the memory of the course instance because clone is in list */
+        course_destroy(new_course);
+        
+    } else {    /* Grade sheet exists */
+        if (find_course(student->grades_info, name) != NULL){
+            return FAIL;
+        }
+
+        /* Memory allocations for new course element */
+        Course* new_course = create_new_course(name,grade);
+        
+        /* Check memory allocation of course */
         if (new_course == NULL){
             return FAIL;
         }
-        
-        /* Adds the course to the front of grades info, checks push attempt */
-        if (list_push_front(student_id->grades_info, new_course) != SUCCESS) {
+
+        if (list_push_front(student->grades_info, new_course) != SUCCESS){
+            free(new_course->course_name);
+            free(new_course);
             return FAIL;
-        };
-
-    /* There's courses in the grades info, find the relevant course. */
-    } else {    
-        Course* mod_course = find_course(student_id->grades_info, name);
-
-        /* There's no existing course, create a new one. */
-        if (mod_course == NULL) {
-            Course* new_course = create_new_course(name, grade);
-            
-            /* Checks memory allocation */
-            if (new_course == NULL) {
-                return FAIL;
-            }
-            
-            /* Insert the course to the back of grades info list. */
-            if (list_push_back(student_id->grades_info, new_course) != SUCCESS){
-                return FAIL;
-            }
-             
-        /* There's existing course, update the grade.*/    
-        } else {
-            
-            /* Checks if grade value is between 0-100 */
-            if (grade < 0 || grade > 100){
-                return FAIL;
-            }
-            
-            mod_course->grade_value = grade;
         }
-
+        /* Free the memory of the course instance because clone is in list */
+        course_destroy(new_course);
+        
     }
+    
     return SUCCESS;
 }
 
@@ -250,24 +311,19 @@ float grades_calc_avg(struct grades *grades, int id, char **out){
         return ERROR;
     }
 
-    if (student_to_check->name == NULL){
+    if (student_to_check->name == NULL || student_to_check->grades_info == NULL)
+    {
         *out = NULL;
         return ERROR;
     }
 
     /* Allocate memory for name*/
-    *out = (char *)malloc(sizeof(char)*(strlen(student_to_check->name) + 1));
-
-    /* Checks memory allocation for out*/
+    *out = (char *)malloc(sizeof(char)*(strlen(student_to_check->name)+1));
     if (*out == NULL){
         return ERROR;
     }
 
-    /* Checks if there is a list of grades */
-    if (student_to_check->grades_info == NULL){
-        *out = NULL;
-        return ERROR;
-    }
+    strcpy(*out,student_to_check->name);
 
     int sum = 0;
     int amount_of_courses = 0;
@@ -284,7 +340,6 @@ float grades_calc_avg(struct grades *grades, int id, char **out){
     }
 
     average = (float)sum / amount_of_courses;
-    strcpy(*out, student_to_check->name);
 
     return average;
 }
@@ -335,7 +390,7 @@ int grades_print_all(Grades* grades){
     struct iterator* student_itr = list_begin(grades->students);
 
     /* Loop through the list and print */
-    while(student_itr) {
+    while(student_itr != NULL) {
         /* Get a single student element from the list to print. */
         Student* s_to_print = (Student*)list_get(student_itr);
         grades_print_student(grades, s_to_print->id);
@@ -375,7 +430,7 @@ Student* find_student(struct list* student_list, int student_id){
         current_student = list_get(student_iterator);
         
         /* Checks if student in the node exist*/
-        if (!current_student){
+        if (current_student == NULL){
             return NULL;
         }
 
@@ -402,8 +457,8 @@ Student* find_student(struct list* student_list, int student_id){
  * @note This function allocates memory for the new student
  */
 
-Student* create_new_student(char* name, int id){
-    Student* new_student = (Student *)malloc(sizeof(Student *));
+Student* create_new_student(const char* name, int id){
+    Student* new_student = (Student *)malloc(sizeof(Student));
     /* Check memory allocation was successful */
     if (new_student == NULL){
         return NULL;
@@ -414,18 +469,21 @@ Student* create_new_student(char* name, int id){
     
     /* Check memory allocation of the grade list was successful */
     if (new_grade_info == NULL){
+        list_destroy(new_grade_info);
+        free(new_student);
         return NULL;
     }
 
     /* Allocates memory for name */
-    char* new_name = (char *)malloc(sizeof(char)*(strlen(name)+1));
+    char* new_name = strdup(name);
     
     /* Check memory allocation was successful */
     if (new_name == NULL){
+        free(new_name);
+        list_destroy(new_grade_info);
+        free(new_student);
         return NULL;
     }
-
-    strcpy(new_name, name);
 
     new_student->grades_info = new_grade_info;
     new_student->name = new_name;
@@ -443,21 +501,19 @@ Student* create_new_student(char* name, int id){
  */
 
 Course* create_new_course(char* name, int grade) {
-        Course* new_course = (Course *)malloc(sizeof(Course *));
+        Course* new_course = (Course *)malloc(sizeof(Course));
         /* Memory allocation check */
         if (new_course == NULL) {
             return FAIL;
         }
 
-        char* new_course_name = (char*)malloc(sizeof(char)*(strlen(name)+1));
+        new_course->course_name = strdup(name);
         /* Memory allocation check */
-        if (new_course_name == NULL) {
+        if (new_course->course_name == NULL) {
+            free(new_course);
             return FAIL;
         }
 
-        strcpy(new_course_name, name);
-
-        new_course->course_name = new_course_name;
         new_course->grade_value = grade;
 
         return new_course;
@@ -470,8 +526,8 @@ Course* create_new_course(char* name, int grade) {
  * @return return a pointer to the wanted course. 
  */
 
-Course* find_course(struct list* courses_list, char* name) {
-    if (courses_list == NULL) {
+Course* find_course(struct list* courses_list, const char* name) {
+    if (courses_list == NULL || name == NULL) {
         return NULL;
     }
     
@@ -482,7 +538,8 @@ Course* find_course(struct list* courses_list, char* name) {
     Course* current_course = NULL;
 
     while(course_iterator != NULL) {
-        current_course = (Course*)list_get(course_iterator);
+        current_course = list_get(course_iterator);
+
         if (strcmp(current_course->course_name, name) == 0) {
             return current_course; 
         }
