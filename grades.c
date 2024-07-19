@@ -418,11 +418,11 @@ int grades_print_student(Grades* grades, int id){
 
 int grades_print_all(Grades* grades){
      /* NULL Errors check. */
-    if (grades == NULL || grades->students == NULL) return FAIL;
+    if (grades == NULL) return FAIL;
     
     /* Access to the top of the students list. */
     struct iterator* student_itr = list_begin(grades->students);
-    if (student_itr == NULL) return FAIL;
+    //if (student_itr == NULL) return SUCCESS;
 
     /* Loop through the list and print */
     while(student_itr != NULL) {
