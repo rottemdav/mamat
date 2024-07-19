@@ -90,7 +90,7 @@ int student_clone(void *src, void **dst){
         Course* new_course = NULL;
 
         /* Cloning the course and deallocates the memory otherwise */
-        if (course_clone((void*)course, (void**)new_course) == FAIL) {
+        if (course_clone((void*)course, (void**)&new_course) == FAIL) {
             list_destroy(clone->grades_info);
             free(clone->name);
             free(clone);
@@ -225,7 +225,7 @@ int grades_add_student(Grades *grades, const char *name, int id){
         if (new_student == NULL){
             return FAIL;
         }
-        if (list_push_front(grades->students,(void *)new_student) != SUCCESS){
+        if (list_push_back(grades->students,(void *)new_student) != SUCCESS){
             student_destroy((void *)new_student);
             return FAIL;
         }
@@ -297,7 +297,7 @@ int grades_add_grade(Grades* grades, const char* name,
             return FAIL;
         }
 
-        if (list_push_front(student->grades_info, (void *)new_course) 
+        if (list_push_back(student->grades_info, (void *)new_course) 
         != SUCCESS){
             free(new_course->course_name);
             free(new_course);
@@ -363,8 +363,11 @@ float grades_calc_avg(struct grades *grades, int id, char **out){
 
         current_course = list_next(current_course);
     }
-
-    average = (float)sum / amount_of_courses;
+    if (amount_of_courses == 0) {
+        average = 0;
+    } else {
+        average = (float)sum / amount_of_courses;
+    }
 
     return average;
 }
@@ -378,53 +381,65 @@ int grades_print_student(Grades* grades, int id){
     Student* s_to_print = find_student(grades->students, id);
 
     /* NULL errors check. */
-    if (s_to_print == NULL) return FAIL;
-    if (s_to_print->name == NULL) return FAIL;
+    if (s_to_print == NULL || s_to_print->name == NULL) return FAIL;
 
     /* Checks if grades-info exists for list-begin call */
     if (s_to_print->grades_info == NULL) return FAIL;
     
-    /* Loop through the list and print . */
-    printf("%s %d: ", s_to_print->name, id);
 
     struct iterator* course_itr = list_begin(s_to_print->grades_info);
+
+    /* Loop through the list and print . */
+        
+    printf("%s %d:%s", s_to_print->name, s_to_print->id, (course_itr == NULL)
+    ? "" : " ");
+    
     while (course_itr) {
 
         /* Get a single course element from the grades list to print. */
         Course* c_to_print = (Course *)list_get(course_itr);
 
         /* Checks if course and course name exists (doesn't suppose to happen)*/
-        if (c_to_print == NULL) return FAIL;
-        if (c_to_print->course_name == NULL) return FAIL;
+        if (c_to_print == NULL || c_to_print->course_name == NULL) return FAIL;
 
+        printf("%s %d%s", c_to_print->course_name, c_to_print->grade_value,
+        (list_next(course_itr) == NULL) ? "" : ", ");
 
-        printf("%s %d, ", c_to_print->course_name, c_to_print->grade_value);
-        
-        course_itr = list_next(course_itr);                 
+        course_itr = list_next(course_itr);    
     }
-
+    //printf("boo\n");
+    if (course_itr == NULL) {
+        printf("\n");
+    }
+    //
     return SUCCESS;
 
 }
 
 int grades_print_all(Grades* grades){
      /* NULL Errors check. */
-    if (grades == NULL) return FAIL;
+    if (grades == NULL || grades->students == NULL) return FAIL;
     
     /* Access to the top of the students list. */
     struct iterator* student_itr = list_begin(grades->students);
+    if (student_itr == NULL) return FAIL;
 
     /* Loop through the list and print */
     while(student_itr != NULL) {
         /* Get a single student element from the list to print. */
         Student* s_to_print = (Student *)list_get(student_itr);
+
         grades_print_student(grades, s_to_print->id);
         
         /* Go down a row */
-        printf("\n");
+        //printf("\n");
         student_itr = list_next(student_itr);
+        /*if(student_itr == NULL) {
+            printf("\n");
+        }*/
         
     }
+    //printf("\n");
     return SUCCESS;
 }
 
@@ -536,7 +551,7 @@ Course* create_new_course(const char* name, int grade) {
             return NULL;
         }
 
-        new_course->course_name = (char *)sizeof((strlen(name)+1));
+        new_course->course_name = (char *)malloc(sizeof(char)*(strlen(name)+1));
         /* Memory allocation check */
         if (new_course->course_name == NULL) {
             free(new_course);
