@@ -2,7 +2,8 @@
 
 /* Constructor Definition */
 String::String(const char *str) {
-    String::string;
+    String::string = str;
+    
 }
 
 GenericString& String::operator=(const char *str) {
@@ -16,7 +17,8 @@ bool String::operator==(const char *other) const {
 }
 
 StringArray String::split(const char *delimiters) const {
-
+    StringArray data = StringArray();
+    
 }
 
 GenericString* make_string(const char *str) {
