@@ -1,19 +1,18 @@
-#include "string.h"
-#include "string-array.h"
-
+ #include "string-array.h"
+#include <vector>
 
 StringArray::StringArray (){
-    std::vector<String> strings;
+    std::vector<GenericString*> strings;
 }
 
 
 void StringArray::add(GenericString* str){
-    string_arr.push_back(str);
+    strings.push_back(str);
 }
 
 GenericString* StringArray::get(size_t index) const{
-    if (index < string_arr.size()) {
-        return string_arr[index];
+    if (index < strings.size()) {
+        return strings[index];
     }
     return nullptr;
 }

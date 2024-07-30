@@ -1,11 +1,18 @@
 #ifndef STRING_H
 #define STRING_H
+
 #include <stdio.h>
-#include <string.h> // for strtok function
-#include <stdlib.h> // for atoi function
+#include <string.h>
+#include <stdlib.h>
 #include <iostream>
+#include <cstring>
 #include "generic-string.h"
 #include "string-array.h"
+
+enum Rule_Type {
+    SRC,
+    DST
+};
 
 class StringArray;
 
@@ -14,7 +21,7 @@ class String : public GenericString {
 
 public:
 
-    String() : string(nullptr) {};
+    String();
 
     /* Opeartors override */
     GenericString& operator=(const char *str);
@@ -30,11 +37,11 @@ public:
     const String& as_string() const;
 
     /* Destrcutor */
-    virtual ~String() {};
+    virtual ~String();
 };
 
 /* Global function that creates a String class */
 GenericString* make_string(const char *str);
+bool white_space(char letter);
 
-
-#endif STRING_H
+#endif // STRING_H
