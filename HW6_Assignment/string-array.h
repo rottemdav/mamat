@@ -1,11 +1,12 @@
 #ifndef STRING_ARRAY_H
 #define STRING_ARRAY_H
+#include "generic-string.h"
 #include "string.h"
-#include <vector>
 
 
-class StringArray : public GenericString {
-    std::vector<GenericString> strings;
+
+class StringArray {
+    std::vector<GenericString*> strings;
     int size;
 public:
     /* Constructor */

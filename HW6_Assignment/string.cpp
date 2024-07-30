@@ -1,100 +1,103 @@
-#include "string.h"
+ #include "string.h"
 
-/* aux functions */
+/* Auxiliary functions */
 bool white_space(char letter);
 
 /* Constructor Definition */
-String::String() {
-    String::string = nullptr;
-    
+String::String(const char* string) {
+    /* Allocate memory fo the string and assign value */
+    char* str = new char(strlen(string));
+    std::memmove(str,string,strlen(string));
 }
 
 GenericString& String::operator=(const char *str) {
-    this->string = new char(*str);
+    if (this->string) {
+        delete[] this->string;
+    }
+    this->string = new char[strlen(str) + 1];
     strcpy(this->string, str);
     return *this;
 }
 
 bool String::operator==(const char *other) const {
-    if (strcmp(this->string, other)==0) {
-        return true;
-    } 
-    return false;
+    return strcmp(this->string, other) == 0;
 }
 
 bool String::operator==(const GenericString &other) const {
-    if (this->string == other.as_string().string) {
-        return true;
+    const String* otherString = dynamic_cast<const String*>(&other);
+    if (otherString) {
+        return strcmp(this->string, otherString->string) == 0;
     }
     return false;
 }
-
 
 StringArray String::split(const char *delimiters) const {
     String clone;
     clone = this->string;
     char* token = strtok(clone.string, delimiters);
 
-    StringArray data = StringArray();
-    
-    while (token != nullptr){
-        GenericString str = new String(token);
-        data.add(str);
-        token = strtok(nullptr,delimiters);
+    StringArray data;
+
+    while (token != nullptr) {
+        GenericString* str = new String();
+        *str = token;
+        data.add(*str);
+        token = strtok(nullptr, delimiters);
     }
-    
+
     return data;
 }
 
 GenericString& String::trim() {
-    /* creates ptr to run over the string, if the currect char is whitespace,
-    adds it to a temp char,  */
-    size_t str_ptr = 0;
-    size_t str_len = std::strlen(this->string);
-    char* temp_str =  new char[str_len];
-    
-    for (str_ptr ; str_ptr < str_len ; str_ptr ++) {
-        if (white_space(this->string[str_ptr]))
-        temp_str += this->string[str_ptr];
+    if (!this->string) return *this;
+
+    size_t start = 0;
+    size_t end = strlen(this->string);
+
+    while (start <= end && white_space(this->string[start])) {
+        start++;
     }
 
-    this->string = temp_str;
-    delete temp_str;
+    end--;
+    while (end >= start && white_space(this->string[end])) {
+        end--;
+    }
+
+    size_t new_length = end - start + 1;
+    char* trimmed_string = new char[new_length + 1];
+
+    std::memmove(trimmed_string, this->string + start, new_length);
+    trimmed_string[new_length] = '\0';
+
+    delete[] this->string;
+    this->string = trimmed_string;
 
     return *this;
-
 }
 
-int to_integer() const {
-    int casted_string = atoi(this->string);
-    return casted_string;
+int String::to_integer() const {
+    return std::atoi(this->string);
 }
 
-String& as_string() {
+String& String::as_string() {
     return *this;
 }
 
-const String& as_string() {
+const String& String::as_string() const {
     return *this;
 }
 
 GenericString* make_string(const char *str) {
-    String* str_to_return = new String();
-    *str_to_return = str;
-    return str_to_return;
+    String* newString = new String();
+    *newString = str;
+    return newString;
 }
 
 String::~String() {
-    delete this->string;
-    
-};
-
+    delete[] this->string;
+}
 
 bool white_space(char letter) {
-    if (letter  == ' ' || letter  == '\t' || letter == '\n' ||
-        letter == '\v' || letter == '\f' || letter == '\r') {
-            return true;
-        } else {
-            return false;
-        }
+    return letter == ' ' || letter == '\t' || letter == '\n' ||
+           letter == '\v' || letter == '\f' || letter == '\r';
 }

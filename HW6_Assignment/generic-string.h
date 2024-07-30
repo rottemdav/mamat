@@ -1,7 +1,7 @@
 #ifndef GENERIC_STRING_H
 #define GENERIC_STRING_H
 
-/* Incomplete types. This is okay. You need to create them. */
+/* :D */
 class String;
 class StringArray;
 
@@ -29,7 +29,7 @@ public:
     virtual GenericString& trim() = 0;
 
     /**
-     * @brief Returns true iff the contents of this == the contents of other.
+     * @brief Returns true if the contents of this == the contents of other.
      */
     virtual bool operator==(const GenericString &other) const = 0;
     virtual bool operator==(const char *other) const = 0;
