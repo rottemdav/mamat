@@ -14,7 +14,7 @@ class String : public GenericString {
 
 public:
 
-    String(const char *str);
+    String() : string(nullptr) {};
 
     /* Opeartors override */
     GenericString& operator=(const char *str);
