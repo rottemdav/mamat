@@ -37,6 +37,8 @@ public:
     String& as_string();
     const String& as_string() const;
 
+    char* get_string(const String str) {};
+
     /* Destrcutor */
     virtual ~String();
 };

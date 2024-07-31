@@ -95,6 +95,10 @@ GenericString* make_string(const char *str) {
     return newString;
 }
 
+char* String::get_string(const String str) {
+    return this->string;
+};
+
 String::~String() {
     delete[] this->string;
 }

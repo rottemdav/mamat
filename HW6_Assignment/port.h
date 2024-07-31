@@ -2,6 +2,8 @@
 #define PORT_H
 #include "generic-field.h"
 #include "string.h"
+#include "string-array.h"
+
 //range: 0-65535
 
 class Port : public GenericField {
