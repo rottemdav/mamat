@@ -19,7 +19,7 @@ GenericString* StringArray::get(size_t index) const{
 
 /* Dstructor */
 StringArray::~StringArray() {
-    for (GenericString* str : string_arr) {
+    for (GenericString* str : strings ) {
         delete str; 
     }
 }

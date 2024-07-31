@@ -2,13 +2,15 @@
 #define STRING_ARRAY_H
 #include "generic-string.h"
 #include "string.h"
-
+#include <vector>
 
 
 class StringArray {
     std::vector<GenericString*> strings;
-    int size;
+    
 public:
+    int size;
+    
     /* Constructor */
     StringArray ();
     

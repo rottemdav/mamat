@@ -31,17 +31,19 @@ bool String::operator==(const GenericString &other) const {
     return false;
 }
 
+char String::operator[](size_t index) const {
+    return this->string[index];
+}
+
 StringArray String::split(const char *delimiters) const {
-    String clone;
-    clone = this->string;
-    char* token = strtok(clone.string, delimiters);
+    GenericString* clone = make_string(this->string);
+    char* token = strtok(clone->as_string().string, delimiters);
 
     StringArray data;
 
     while (token != nullptr) {
-        GenericString* str = new String();
-        *str = token;
-        data.add(*str);
+        GenericString* str = make_string(token);
+        data.add(str);
         token = strtok(nullptr, delimiters);
     }
 
@@ -88,7 +90,7 @@ const String& String::as_string() const {
 }
 
 GenericString* make_string(const char *str) {
-    String* newString = new String();
+    String* newString = new String(str);
     *newString = str;
     return newString;
 }

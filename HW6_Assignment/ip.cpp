@@ -2,13 +2,13 @@
 #define BYTE 8
 
 /* Will recieve either */
-Ip::Ip(const String &rule) {
+Ip::Ip(const String &rule) : rule_data(rule), type_of_rule(SRC) {
     rule_data = rule;
     rule_data.trim();
 
     /* Get the type of rule (Source / Destination) */
-    StringArray rule_fields = rule_data.split('=');
-    if (rule_fields.get(0)->as_string[0] == 's') {
+    StringArray rule_fields = rule_data.split("=");
+    if ((rule_fields.get(0))->as_string()[0] == 's') {
         type_of_rule = SRC;
     } else {
         type_of_rule = DST;
@@ -16,19 +16,19 @@ Ip::Ip(const String &rule) {
 
     /* rule_data_prefix: {138.0.0.10, 24} */
     /* Seperate between ip and prefix*/
-    StringArray rule_data_prefix = rule_fields.get(1)->split('/');
+    StringArray rule_data_prefix = rule_fields.get(1)->split("/");
     prefix = rule_data_prefix.get(1)->to_integer();
     
     /* Transform the rule ip into int for match function */
-    int_rule = build_ip_to_int(rule_data_prefix.get(0));
+    int_rule = build_ip_to_int((rule_data_prefix.get(0))->as_string());
     
 }
 
-unsigned int Ip::build_ip_to_int (String ip) {
-    String data = ip;
+unsigned int Ip::build_ip_to_int (const String &ip_data) const {
+    String data = String(ip_data.as_string());
 
     /* data_array = {138, 0, 0, 10} */
-    StringArray data_array = ip.split("."); // split the ip 
+    StringArray data_array = data.split("."); // split the ip 
     
     unsigned int ip_int = 0;
     unsigned int byte_to_int = 0;
@@ -41,12 +41,11 @@ unsigned int Ip::build_ip_to_int (String ip) {
         ip_int << BYTE;         // Shift left by 8 bit 
     }
 
-    ~data_array;
-
     return ip_int;
 }
 
-bool Ip::ip_matches_rule(unsigned int ip, unsigned int rule_ip, int prefix){
+bool Ip::ip_matches_rule(unsigned int ip, unsigned int rule_ip, int prefix)
+                        const{
     int suffix = 32 - prefix;
     unsigned int msk = -1U << suffix;
 
@@ -56,14 +55,14 @@ bool Ip::ip_matches_rule(unsigned int ip, unsigned int rule_ip, int prefix){
 }
 
 /* Will get the entire packet, need to find relevant field from rule */
-bool Ip::match(const GenericString &packet) {
+bool Ip::match(const GenericString &packet) const{
     String packet_data = packet.as_string();
     packet_data.trim();
 
     /* Will split the packet by fields */
     StringArray packet_fields = packet_data.split(",");
     for (int i = 0; i < 4; i++){
-        packet_fields.get(i).trim();
+        ((packet_fields.get(i)))->trim();
 
         /* Check if the type of rule is the same, if not continue */
         char s_or_d = packet_fields.get(i)->as_string()[0];
@@ -76,7 +75,8 @@ bool Ip::match(const GenericString &packet) {
             StringArray ip_data = packet_fields.get(i)->split("=");
             
             /* Convert ip string to unsigned int*/
-            unsigned int ip_to_check = build_ip_to_int(ip_data.get(1));
+            String ip_to_transfer = (ip_data.get(1))->as_string();
+            unsigned int ip_to_check = build_ip_to_int(ip_to_transfer);
             
             if (ip_matches_rule(ip_to_check,this->int_rule,this->prefix)){
                 return true;
@@ -89,6 +89,5 @@ bool Ip::match(const GenericString &packet) {
 }
 
 Ip::~Ip(){
-    delete this->rule_data;
 }
 

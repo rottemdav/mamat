@@ -13,20 +13,20 @@ int prefix;
 
 public:
     /* Constructor */
-    Ip(const String &rule) : rule_data(rule),
-    prefix(0){};
+    Ip(const String &rule) : rule_data(rule), type_of_rule(SRC) {};
 
     /* Will convert the ip array into the ip unsigned int */
-    unsigned int build_ip_to_int (String &ip_data);
+    unsigned int build_ip_to_int (const String &ip_data) const ;
 
     /* Will check if the two ip matches */
-    bool ip_matches_rule(unsigned int ip, unsigned int rule_ip, int prefix);
+    bool ip_matches_rule(unsigned int ip, unsigned int rule_ip, int prefix) 
+                        const;
 
     /* */
     bool match(const GenericString &packet) const;
 
     /* Destructor */
     ~Ip() {};
-}
+};
 
-#endif;
+#endif 

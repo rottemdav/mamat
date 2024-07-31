@@ -20,14 +20,15 @@ class String : public GenericString {
     char* string;
 
 public:
-
-    String();
+    String(const char* string) {};
 
     /* Opeartors override */
     GenericString& operator=(const char *str);
 
     bool operator==(const GenericString &other) const;
     bool operator==(const char *other) const ;
+
+    char operator[](std::size_t index) const;
 
     /* Class's required function */
     StringArray split(const char *delimiters) const override;
