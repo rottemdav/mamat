@@ -38,7 +38,7 @@ unsigned int Ip::build_ip_to_int (const String &ip_data) const {
         byte_to_int = data_array.get(i)->to_integer();
         
         ip_int += byte_to_int;  // add the current ip field
-        ip_int << BYTE;         // Shift left by 8 bit 
+        ip_int <<= BYTE;         // Shift left by 8 bit 
     }
 
     return ip_int;
@@ -80,14 +80,11 @@ bool Ip::match(const GenericString &packet) const{
             
             if (ip_matches_rule(ip_to_check,this->int_rule,this->prefix)){
                 return true;
-            } else {
-                return false;
             }
 
         }
     }
+    return false;
 }
 
-Ip::~Ip(){
-}
 

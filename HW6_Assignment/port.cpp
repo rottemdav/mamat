@@ -16,7 +16,7 @@ Port::Port(const String &rule) : rule_data(rule), rule_type(SRC) {
     } 
 }
 
-void port_range_extract(const StringArray &rule, int port_range[2]) {
+void Port::port_range_extract(StringArray &rule, int port_range[2]) {
     //[ ,22-22]
     String splitted_rule = (rule.get(1))->as_string();
     StringArray rule_range = splitted_rule.split("-");
@@ -46,14 +46,10 @@ bool Port::match(const GenericString &packet) const {
     if ((packet_range.get(0))->to_integer() >= port_range[0] &&
          (packet_range.get(1))->to_integer() <= port_range[1]){
         return true;
-    } else {
-        false;
-    }
+    } 
     }
     
-}
+    }
+    return false;
 }
 
-Port::~Port() {
-    
-}

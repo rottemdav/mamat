@@ -13,8 +13,7 @@ int port_range[2];
 
 public: 
     /* Constructor*/
-    Port(const String &rule) : rule_data(rule), rule_type(SRC), 
-                               port_range{0} {};
+    Port(const String &rule);
 
     /* Extracts the port range from the rule in order to define the bounds*/
     void port_range_extract(StringArray &rule_data, int port_range[2]);

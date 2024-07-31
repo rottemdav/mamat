@@ -13,7 +13,7 @@ int prefix;
 
 public:
     /* Constructor */
-    Ip(const String &rule) : rule_data(rule), type_of_rule(SRC) {};
+    Ip(const String &rule);
 
     /* Will convert the ip array into the ip unsigned int */
     unsigned int build_ip_to_int (const String &ip_data) const ;

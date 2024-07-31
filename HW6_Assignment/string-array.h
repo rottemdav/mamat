@@ -14,7 +14,7 @@ public:
     /* Constructor */
     StringArray ();
     
-    void add(GenericString* str){};
+    void add(GenericString* str);
 
     /* Getter function */
     GenericString* get(size_t index) const;

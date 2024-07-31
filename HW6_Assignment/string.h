@@ -20,7 +20,7 @@ class String : public GenericString {
     char* string;
 
 public:
-    String(const char* string) {};
+    String(const char* string);
 
     /* Opeartors override */
     GenericString& operator=(const char *str);
