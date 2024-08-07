@@ -1,6 +1,6 @@
 CXX=g++
 CLINK=$(CXX)
-CXXFLAGS=-g -Wall -std=c++11 -fpic
+CXXFLAGS=-g -Wall -std=c++11 -fpic -g3 -O0
 LIB= -linput -lfirewall -L.
 OBJS=ip.o port.o string-array.o string.o 
 

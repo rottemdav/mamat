@@ -6,7 +6,7 @@
 
 
 class StringArray {
-    GenericString** str_array = new GenericString*[4];
+    GenericString** str_array;
     
 public:
     int size;

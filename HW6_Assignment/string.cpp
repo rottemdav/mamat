@@ -7,23 +7,21 @@ char* String::get_string() const {
     return this->string;
 }
 
-void String::set_string(const char *str){
-    if (this->get_string() != nullptr){
-        delete[] this->string;
-    } 
-
-    if (str == nullptr){
+void String::set_string(const char *str) {
+    if (str == nullptr) {
         this->string = nullptr;
+    } else {
+        delete[] this->string;
+        this->string = new char[strlen(str) + 1];
+        strcpy(this->string, str);
     }
-
-    this->string = new char[strlen(str) + 1];
-    strcpy(this->string, str); 
 }
+
 
 /* Constructor Definition */
 String::String(const char* str) {
     string = nullptr;
-    String::set_string(str);
+    set_string(str);
 }
 
 String::String(const String &other) {
@@ -33,17 +31,18 @@ String::String(const String &other) {
 
 GenericString& String::operator=(const char *str) {
     /* Deallocate memory of original string */
-    if (this->string) {
-        delete[] this->string;
-        this->string = nullptr;
-    }
+    // if (this->string ) {
+    //     delete[] this->string;
+    //     this->string = nullptr;
+    // }
 
-    /* Allocate memory of new string and copy its content */
-    if (str){
-        this->string = new char[strlen(str) + 1];
-        strcpy(this->string, str);
-    }
+    // /* Allocate memory of new string and copy its content */
+    // if (str){
+    //     this->string = new char[strlen(str) + 1];
+    //     strcpy(this->string, str);
+    // }
     
+    String::set_string(str);
     return *this;
 }
 
@@ -66,32 +65,30 @@ bool String::operator==(const GenericString &other) const {
     return false;
 }
 
-char String::operator[](size_t index) const {
+char String::operator[](int index) const {
     if (this->string){
         return this->string[index];
     } 
     /* Otherwise */
-    throw std::out_of_range("Index out of range");
+    //throw std::out_of_range("Index out of range");
+    return 0;
 }
 
 StringArray String::split(const char *delimiters) const {
     /* Make a clone of current string */
-    char* clone_string = new char[strlen(this->string) + 1];
-    strcpy(clone_string, this->string);
     
-    char* token = std::strtok(clone_string, delimiters);
+    char* token = strtok(this->get_string(), delimiters);
+    int i = 0;
 
-    StringArray data;
-
-    while (token != nullptr) {
-        int i = 0;
+    StringArray data =  StringArray();
+    while (token) {
         GenericString* str = make_string(token);
-        data.set(str, i);
+
+        data.set(str,i);
         token = strtok(nullptr, delimiters);
         i++;
     }
     
-    delete[] clone_string;
     return data;
 }
 
@@ -99,27 +96,30 @@ GenericString& String::trim() {
     if (!this->string) 
         return *this;
 
-    size_t start = 0;
-    size_t end = strlen(this->string);
+    int start = 0;
+    int end = strlen(this->string);
 
     while (start < end && white_space(this->string[start])) {
         start++;
     }
 
-    end--;
+    //end--;
     while (end > start && white_space(this->string[end - 1])) {
         end--;
     }
 
-    size_t new_length = end - start;
+    int new_length = end - start;
+    std::cout << "start: " << start << ", end: " << end << ", new_length: " << new_length << std::endl;
+    
     char* trimmed_string = new char[new_length + 1];
 
     std::memmove(trimmed_string, this->string + start, new_length);
+    //strncpy(trimmed_string,this->string+start, new_length);
     trimmed_string[new_length] = '\0';
 
     /* Deleting the memory of original string and setting the pointer to new */
-    delete[] this->string;
-    this->string = trimmed_string;
+    set_string(trimmed_string);
+    delete[] trimmed_string;
 
     return *this;
 }

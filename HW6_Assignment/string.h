@@ -22,7 +22,7 @@ class String : public GenericString {
 public:
     char* get_string() const;
     void set_string(const char *str);
-    String(const char* str);
+    String(const char* str );
     String(const String &other);
 
     /* Opeartors override */
@@ -31,7 +31,7 @@ public:
     bool operator==(const GenericString &other) const;
     bool operator==(const char *other) const ;
 
-    char operator[](std::size_t index) const;
+    char operator[](int index) const;
 
     /* Class's required function */
     StringArray split(const char *delimiters) const override;

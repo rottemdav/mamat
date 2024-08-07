@@ -2,21 +2,26 @@
 
 
 StringArray::StringArray() {
-    GenericString** str_array = new GenericString*[MAX_ELEMENTS];
-
+    str_array = new GenericString*[MAX_ELEMENTS];
+    GenericString* str_elem;
     for (int i = 0; i < MAX_ELEMENTS; i++){
-        str_array[i] = nullptr;
+        str_elem = new String(nullptr);
+        str_array[i] = str_elem;
     }
 }
 
 /* Copy constructor */
 StringArray::StringArray(const StringArray& other) {
-    GenericString** str_copy = new GenericString*[MAX_ELEMENTS];
-
+    str_array = new GenericString*[MAX_ELEMENTS];
+    GenericString* str_elem;
+    char* str_data;
     for (int i = 0; i < MAX_ELEMENTS; i++){
         if (other.str_array[i]){
-            str_array[i] = 
-                    make_string(other.str_array[i]->as_string().get_string());
+            // str_array[i] = 
+            //         make_string(other.str_array[i]->as_string().get_string());
+            str_data = other.str_array[i]->as_string().get_string();
+            str_elem = make_string(str_data);
+            StringArray::set(str_elem, i);
         } else {
             str_array[i] = nullptr;
         }
@@ -32,14 +37,14 @@ void StringArray::set(GenericString* str,int index){
     }
 }
 
-GenericString* StringArray::get(size_t index) const{
+GenericString* StringArray::get(int index) const{
     if (index >= 0 && index < MAX_ELEMENTS && this->str_array != nullptr){
         return this->str_array[index];
     }
     return nullptr;
 }
 
-GenericString* StringArray::operator[](std::size_t index) const{
+GenericString* StringArray::operator[](int index) const{
     if (index >= 0 && index < MAX_ELEMENTS && this->str_array != nullptr){
         return this->str_array[index];
     }
@@ -49,8 +54,9 @@ GenericString* StringArray::operator[](std::size_t index) const{
 /* Dstructor */
 StringArray::~StringArray() {
     for (int i = 0; i < MAX_ELEMENTS; i++) {
-        delete this->str_array[i]; 
+        if (this->str_array[i] != nullptr){
+            delete this->str_array[i]; 
+        }
     }
-    
     delete[] this->str_array;
 }
