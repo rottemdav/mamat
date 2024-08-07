@@ -20,10 +20,10 @@ void Port::port_range_extract(StringArray &rule, int port_range[2]) {
     //[ ,22-22]
     String splitted_rule = (rule.get(1))->as_string();
     StringArray rule_range = splitted_rule.split("-");
-    if (rule_range.size == 2) {
-        port_range[0] = (rule_range.get(0))->to_integer();
-        port_range[1] = (rule_range.get(1))->to_integer();
-    }
+    
+    port_range[0] = (rule_range.get(0))->to_integer();
+    port_range[1] = (rule_range.get(1))->to_integer();
+    
 
 }
 
@@ -34,17 +34,23 @@ bool Port::match(const GenericString &packet) const {
     for (int i = 0 ; i < 4 ; i++) {
         (splitted_packet.get(i))->trim();
         char s_or_d = splitted_packet.get(i)->as_string()[0];
+
+        if (((s_or_d == 's') && (this->rule_type == DST)) || 
+            ((s_or_d == 'd') && (this->rule_type == SRC))){
+            continue;
+        }
+
         char ip_or_port = splitted_packet.get(i)->as_string()[4];
     
-    if (s_or_d != this->rule_type || ip_or_port != 'i') {
+    if (ip_or_port != 'p') {
         continue;
     } else {
     StringArray port_data = splitted_packet.get(i)->split("=");
 
-    String targeted_filed = (port_data.get(1))->as_string();
-    StringArray packet_range = targeted_filed.split("-");
-    if ((packet_range.get(0))->to_integer() >= port_range[0] &&
-         (packet_range.get(1))->to_integer() <= port_range[1]){
+    String target_port = (port_data.get(1))->as_string();
+    int port = target_port.to_integer();
+    if ((port >= port_range[0]) &&
+         (port <= port_range[1])){
         return true;
     } 
     }

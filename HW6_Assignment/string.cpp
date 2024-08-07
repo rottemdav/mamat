@@ -11,7 +11,9 @@ void String::set_string(const char *str) {
     if (str == nullptr) {
         this->string = nullptr;
     } else {
-        delete[] this->string;
+        if (this->string)
+            delete[] this->string;
+        
         this->string = new char[strlen(str) + 1];
         strcpy(this->string, str);
     }
@@ -30,18 +32,6 @@ String::String(const String &other) {
 }
 
 GenericString& String::operator=(const char *str) {
-    /* Deallocate memory of original string */
-    // if (this->string ) {
-    //     delete[] this->string;
-    //     this->string = nullptr;
-    // }
-
-    // /* Allocate memory of new string and copy its content */
-    // if (str){
-    //     this->string = new char[strlen(str) + 1];
-    //     strcpy(this->string, str);
-    // }
-    
     String::set_string(str);
     return *this;
 }
@@ -69,8 +59,6 @@ char String::operator[](int index) const {
     if (this->string){
         return this->string[index];
     } 
-    /* Otherwise */
-    //throw std::out_of_range("Index out of range");
     return 0;
 }
 
@@ -116,8 +104,8 @@ GenericString& String::trim() {
     trimmed_string[new_length] = '\0';
 
     /* Deleting the memory of original string and setting the pointer to new */
-    set_string(trimmed_string);
-    delete[] trimmed_string;
+    delete[] this->string;
+    this->string = trimmed_string;
 
     return *this;
 }
@@ -144,6 +132,7 @@ GenericString* make_string(const char *str) {
 String::~String() {
     if (this->string){
         delete[] this->string;
+        this->string = nullptr;
     }
 }
 

@@ -72,10 +72,14 @@ bool Ip::match(const GenericString &packet) const{
 
         /* Check if the type of rule is the same, if not continue */
         char s_or_d = packet_fields.get(i)->as_string()[0];
+        if (((s_or_d == 's') && (this->type_of_rule == DST)) || 
+            ((s_or_d == 'd') && (this->type_of_rule == SRC))){
+            continue;
+        }
         char ip_or_port = packet_fields.get(i)->as_string()[4];
 
         /* If not ip rule or not the same type of ip rule will continue */
-        if (s_or_d != this->type_of_rule || ip_or_port != 'i'){
+        if (ip_or_port != 'i'){
             continue;
         } else {
             StringArray ip_data = packet_fields.get(i)->split("=");
