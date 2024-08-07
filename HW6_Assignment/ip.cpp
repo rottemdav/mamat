@@ -7,8 +7,7 @@ Ip::Ip(const String &rule) : rule_data(rule), type_of_rule(SRC) {
     /* Get the type of rule (Source / Destination) */
     StringArray rule_fields = rule_data.split("=");
 
-    
-
+    printf("After split %s \n", rule_fields.get(1)->as_string().get_string());
     if (rule_fields.get(0) == nullptr || rule_fields.get(1) == nullptr){
         throw std::invalid_argument("Invalid rule format");
     }
@@ -28,7 +27,7 @@ Ip::Ip(const String &rule) : rule_data(rule), type_of_rule(SRC) {
     prefix = rule_data_prefix.get(1)->to_integer();
 
     /* Transform the rule ip into int for match function */
-    int_rule = build_ip_to_int((rule_data_prefix.get(0))->as_string());
+    int_rule = Ip::build_ip_to_int((rule_data_prefix.get(0))->as_string());
     
     rule_data_prefix.~StringArray();
 }

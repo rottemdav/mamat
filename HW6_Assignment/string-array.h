@@ -2,20 +2,22 @@
 #define STRING_ARRAY_H
 #include "generic-string.h"
 #include "string.h"
-#include <vector>
+#define MAX_ELEMENTS 4
 
 
 class StringArray {
-    std::vector<GenericString*> strings;
+    GenericString** str_array = new GenericString*[4];
     
 public:
     int size;
     
     /* Constructor */
     StringArray ();
-    
-    void add(GenericString* str);
+    StringArray(const StringArray& other);
+    void set(GenericString* str, int index);
 
+    GenericString* operator[](std::size_t index) const;
+    
     /* Getter function */
     GenericString* get(size_t index) const;
 

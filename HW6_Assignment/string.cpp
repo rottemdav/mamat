@@ -1,17 +1,34 @@
- #include "string.h"
+#include "string.h"
 
 /* Auxiliary functions */
 bool white_space(char letter);
 
-/* Constructor Definition */
-String::String(const char* string) {
-    /* Allocate memory fo the string and assign value */
-    if (string){
-        this->string = new char[strlen(string)+1];
-        strcpy(this->string,string); // Changed from std::memmov
-    } else {
+char* String::get_string() const {
+    return this->string;
+}
+
+void String::set_string(const char *str){
+    if (this->get_string() != nullptr){
+        delete[] this->string;
+    } 
+
+    if (str == nullptr){
         this->string = nullptr;
     }
+
+    this->string = new char[strlen(str) + 1];
+    strcpy(this->string, str); 
+}
+
+/* Constructor Definition */
+String::String(const char* str) {
+    string = nullptr;
+    String::set_string(str);
+}
+
+String::String(const String &other) {
+    string = nullptr;
+    set_string(other.get_string());
 }
 
 GenericString& String::operator=(const char *str) {
@@ -67,9 +84,11 @@ StringArray String::split(const char *delimiters) const {
     StringArray data;
 
     while (token != nullptr) {
+        int i = 0;
         GenericString* str = make_string(token);
-        data.add(str);
+        data.set(str, i);
         token = strtok(nullptr, delimiters);
+        i++;
     }
     
     delete[] clone_string;
@@ -125,14 +144,9 @@ GenericString* make_string(const char *str) {
     return newString;
 }
 
-char* String::get_string() const{
-    return this->string;
-}
-
 String::~String() {
     if (this->string){
         delete[] this->string;
-        this->string = nullptr;
     }
 }
 

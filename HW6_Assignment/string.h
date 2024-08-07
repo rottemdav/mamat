@@ -20,7 +20,10 @@ class String : public GenericString {
     char* string;
 
 public:
-    String(const char* string);
+    char* get_string() const;
+    void set_string(const char *str);
+    String(const char* str);
+    String(const String &other);
 
     /* Opeartors override */
     GenericString& operator=(const char *str);
@@ -35,9 +38,7 @@ public:
     GenericString& trim();
     int to_integer() const ;
     String& as_string();
-    const String& as_string() const;
-
-    char* get_string() const;
+    const String& as_string() const;   
 
     /* Destrcutor */
     virtual ~String();
@@ -45,6 +46,7 @@ public:
 
 /* Global function that creates a String class */
 GenericString* make_string(const char *str);
+
 bool white_space(char letter);
 
 #endif // STRING_H
