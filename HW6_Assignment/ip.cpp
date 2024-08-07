@@ -3,11 +3,16 @@
 
 /* Will recieve either */
 Ip::Ip(const String &rule) : rule_data(rule), type_of_rule(SRC) {
-    rule_data = rule;
-    rule_data.trim();
 
     /* Get the type of rule (Source / Destination) */
     StringArray rule_fields = rule_data.split("=");
+
+    
+
+    if (rule_fields.get(0) == nullptr || rule_fields.get(1) == nullptr){
+        throw std::invalid_argument("Invalid rule format");
+    }
+
     if ((rule_fields.get(0))->as_string()[0] == 's') {
         type_of_rule = SRC;
     } else {
@@ -17,15 +22,19 @@ Ip::Ip(const String &rule) : rule_data(rule), type_of_rule(SRC) {
     /* rule_data_prefix: {138.0.0.10, 24} */
     /* Seperate between ip and prefix*/
     StringArray rule_data_prefix = rule_fields.get(1)->split("/");
+    if (rule_data_prefix.get(1) == nullptr){
+        throw std::invalid_argument("Invalid rule format");
+    }
     prefix = rule_data_prefix.get(1)->to_integer();
-    
+
     /* Transform the rule ip into int for match function */
     int_rule = build_ip_to_int((rule_data_prefix.get(0))->as_string());
     
+    rule_data_prefix.~StringArray();
 }
 
 unsigned int Ip::build_ip_to_int (const String &ip_data) const {
-    String data = String(ip_data.as_string());
+    String data = ip_data;
 
     /* data_array = {138, 0, 0, 10} */
     StringArray data_array = data.split("."); // split the ip 
@@ -37,8 +46,9 @@ unsigned int Ip::build_ip_to_int (const String &ip_data) const {
         /* Turn the current byte of data into Uinteger, will start from MSB */
         byte_to_int = data_array.get(i)->to_integer();
         
-        ip_int += byte_to_int;  // add the current ip field
-        ip_int <<= BYTE;         // Shift left by 8 bit 
+        ip_int = (ip_int << BYTE) | byte_to_int; // Add the current ip field 
+                                                 // and shift left by 8 bits
+                                                 // for all besides last byte  
     }
 
     return ip_int;
@@ -62,7 +72,7 @@ bool Ip::match(const GenericString &packet) const{
     /* Will split the packet by fields */
     StringArray packet_fields = packet_data.split(",");
     for (int i = 0; i < 4; i++){
-        ((packet_fields.get(i)))->trim();
+        packet_fields.get(i)->trim();
 
         /* Check if the type of rule is the same, if not continue */
         char s_or_d = packet_fields.get(i)->as_string()[0];
@@ -75,6 +85,7 @@ bool Ip::match(const GenericString &packet) const{
             StringArray ip_data = packet_fields.get(i)->split("=");
             
             /* Convert ip string to unsigned int*/
+            ip_data.get(1)->trim();
             String ip_to_transfer = (ip_data.get(1))->as_string();
             unsigned int ip_to_check = build_ip_to_int(ip_to_transfer);
             

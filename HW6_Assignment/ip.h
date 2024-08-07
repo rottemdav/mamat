@@ -22,7 +22,7 @@ public:
     bool ip_matches_rule(unsigned int ip, unsigned int rule_ip, int prefix) 
                         const;
 
-    /* */
+    
     bool match(const GenericString &packet) const;
 
     /* Destructor */

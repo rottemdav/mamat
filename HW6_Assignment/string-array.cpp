@@ -1,10 +1,8 @@
 #include "string-array.h"
 #include <vector>
 
-StringArray::StringArray (){
-    std::vector<GenericString*> strings;
-}
-
+/* Intializing the String array by Member Initializer List */
+StringArray::StringArray() : strings() {}
 
 void StringArray::add(GenericString* str){
     strings.push_back(str);
@@ -19,7 +17,7 @@ GenericString* StringArray::get(size_t index) const{
 
 /* Dstructor */
 StringArray::~StringArray() {
-    for (GenericString* str : strings ) {
+    for (GenericString* str : strings) {
         delete str; 
     }
 }
