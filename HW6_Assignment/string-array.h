@@ -16,10 +16,10 @@ public:
     StringArray(const StringArray& other);
     void set(GenericString* str, int index);
 
-    GenericString* operator[](std::size_t index) const;
+    GenericString* operator[](int index) const;
     
     /* Getter function */
-    GenericString* get(size_t index) const;
+    GenericString* get(int index) const;
 
     /* Dstructor */
     ~StringArray();
