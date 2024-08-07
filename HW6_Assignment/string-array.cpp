@@ -17,8 +17,6 @@ StringArray::StringArray(const StringArray& other) {
     char* str_data;
     for (int i = 0; i < MAX_ELEMENTS; i++){
         if (other.str_array[i]){
-            // str_array[i] = 
-            //         make_string(other.str_array[i]->as_string().get_string());
             str_data = other.str_array[i]->as_string().get_string();
             str_elem = make_string(str_data);
             StringArray::set(str_elem, i);

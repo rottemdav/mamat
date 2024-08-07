@@ -109,12 +109,10 @@ GenericString& String::trim() {
     }
 
     int new_length = end - start;
-    std::cout << "start: " << start << ", end: " << end << ", new_length: " << new_length << std::endl;
     
     char* trimmed_string = new char[new_length + 1];
 
     std::memmove(trimmed_string, this->string + start, new_length);
-    //strncpy(trimmed_string,this->string+start, new_length);
     trimmed_string[new_length] = '\0';
 
     /* Deleting the memory of original string and setting the pointer to new */
@@ -140,7 +138,6 @@ const String& String::as_string() const {
 
 GenericString* make_string(const char *str) {
     String* newString = new String(str);
-    //*newString = str;  ~ no need because String constructor already copies
     return newString;
 }
 
