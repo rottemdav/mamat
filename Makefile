@@ -32,5 +32,5 @@ string-array.o: string-array.cpp string-array.h
 	$(CXX) $(CXXFLAGS) -c string-array.cpp
 
 clean:
-	$(RM) *.o firewall.exe libfirewall.so:
+	$(RM) *.o firewall.exe libfirewall.so
 

@@ -4,7 +4,7 @@
 Port::Port(const String &rule) : rule_data(rule), rule_type(SRC) {
     port_range[0] = 0;
     port_range[1] = 0;
-    rule_data = rule;
+    //rule_data = rule;
     rule_data.trim();
     StringArray rules_fields = rule_data.split("=");
     port_range_extract(rules_fields, port_range);
