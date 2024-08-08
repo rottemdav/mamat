@@ -1,37 +1,40 @@
-# #!/bin/bash
-
-# # Read all packets from stdin into “$packets”
-# packets=$(cat -)
-
-# # Read rule file, convert commas to whitespace
-# fields=$(cat $1 | sed ‘s/,/ /g’)
-
-# # In each iteration, keep only the packets that match the field
-# for field in $fields; do
-#  packets=$(echo “$packets” | ./firewall.exe “$field”)
-# done
-
-# # Echo the final list of packets. Sort and remove duplicates
-# echo “$packets” | sort | uniq
-
 #!/bin/bash
 
-# Check if the correct number of arguments is provided
-if (( $# >2 )); then
-        echo "Wrong number of arguments" >&2
-        exit 1
-fi
-#the first argument is the rules file
-#rules include the lines trimmed
-rules=$(sed '/^$/d' "$1" | sed '/^#/d' | sed 's/#.*//')
-#good_ptks=""
-og_stdin=$(cat | sed 's/ //g')
-while IFS= read -r line; do
-        input="$og_stdin"
-        fields=$(echo "$line" | awk -F ',' '{for (i=1; i<=NF; i++) print $i}')
-        for field in $fields; do
-                input=$(echo "$input" | ./firewall.exe "$field")
-        done
-        good_ptks+="$input"$'\n'
-done < <(echo "$rules")
-echo "$(echo "$good_ptks" | sort -u | sed '1d')"
+and_clause() {
+#  Read all packets from stdin into “$packets”
+    local packets="$1"
+    local fields="$2"
+
+# Read rule file
+    for field in $fields; do
+        packets=$(echo "$packets" | ./firewall.exe "$field")
+    done
+
+# In each iteration, keep only the packets that match the field
+    echo "$packets" | sort | uniq
+}
+
+# Read all packets from stdin into "$packets"
+packets=$(cat -)
+
+# Read the rules 
+rules=$(cat "$1")
+
+# Holds all matched packets
+pkts="" # Holds all matched packets
+IFS=$'\n' # Set internal field separator
+
+# Process each rule line by line
+for rule in $rules; do
+# In each iteration, append to total packets only those that matched the
+# current rule
+    rule=$(echo "$rule" | sed 's/^[ \t]*//;s/[ \t]*$//')
+
+    matched_packets=$(and_clause "$packets" "$rule")
+    
+    # Append matched packets to the total packets
+    pkts+="$matched_packets"$'\n'
+done
+
+# Echo the final list of packets. Sort and remove duplicates
+echo -e "$pkts" | sort | uniq
