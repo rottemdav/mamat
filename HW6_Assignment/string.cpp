@@ -10,9 +10,9 @@ char* String::get_string() const {
 void String::set_string(const char *str) {
     if (str == nullptr) {
         this->string = nullptr;
-    } 
-    if (this->string) {
-        delete[] this->string;
+    } else {
+        //if (this->string)
+            delete[] this->string;
         
         this->string = new char[strlen(str) + 1];
         strcpy(this->string, str);
