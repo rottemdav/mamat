@@ -1,40 +1,34 @@
 #!/bin/bash
 
 and_clause() {
-#  Read all packets from stdin into “$packets”
     local packets="$1"
     local fields="$2"
 
-# Read rule file
     for field in $fields; do
         packets=$(echo "$packets" | ./firewall.exe "$field")
     done
 
-# In each iteration, keep only the packets that match the field
     echo "$packets" | sort | uniq
 }
 
-# Read all packets from stdin into "$packets"
 packets=$(cat -)
 
-# Read the rules 
-rules=$(cat "$1")
+rules=$(sed '/^$/d' "$1" | sed '/^#/d' | sed 's/#.*//')
 
-# Holds all matched packets
-pkts="" # Holds all matched packets
-IFS=$'\n' # Set internal field separator
+pkts=""
+IFS=$'\n'
 
-# Process each rule line by line
 for rule in $rules; do
-# In each iteration, append to total packets only those that matched the
-# current rule
-    rule=$(echo "$rule" | sed 's/^[ \t]*//;s/[ \t]*$//')
+    #clean_rule=$(echo "$rule" | sed 's/^[ \t]*//' | sed 's/[ \t]*$//' | sed 's/ * , */,/g')
 
     matched_packets=$(and_clause "$packets" "$rule")
-    
-    # Append matched packets to the total packets
-    pkts+="$matched_packets"$'\n'
+
+    if [ -n "$pkts" ]; then
+        pkts+=$'\n'
+    fi
+    pkts+="$matched_packets"
+    pkts+=$'\n'
 done
 
-# Echo the final list of packets. Sort and remove duplicates
-echo -e "$pkts" | sort | uniq
+echo "$pkts" | sort | uniq | sed 's/* ,/,/g' | sed 's/, */,/g' | \
+sed '0,/^$/d' |  sed 's/[ \t]*$//'
